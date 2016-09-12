@@ -1,5 +1,5 @@
-## simplrwp
-A developer's framework for WordPress
+## SimplrWP
+A developer's framework for WordPress.
 
 # Overview
  The core behind SimplrWP is the SimplrWP Object.  This is similar to WordPress's Custom Post Type (CPT), but with more flexibility and control over the database structure, how they work within the WordPress Admin Dashboard, and how the object's data is validated. 
