@@ -1,0 +1,5 @@
+.simplrwp-metabox .inside { margin: 0 !important; padding: 0 !important; }
+.simplrwp-metabox .field { margin: 0; padding: 15px 12px; border-top: #EEEEEE solid 1px; position: relative; clear: left; }
+.simplrwp-metabox .field:first-of-type { border-top:0; }
+.simplrwp-metabox .simplrwp--label { display:block; font-weight:bold; margin-bottom:5px; }
+.simplrwp-metabox .textarea{width:100%;height:100px;}
