@@ -80,7 +80,7 @@ class Admin {
 		}
 	}
 	
-	private function render_error_messages($errors) {
+	private function _render_error_messages($errors) {
 		$error_messages = array();
 		
 		foreach($errors as $field_name => $error_message_group) {
@@ -184,7 +184,7 @@ class Admin {
 		// all looks good, let's attempt to save the data
 		$results = $this->options['object']->update($data);
 		if(isset($results['valid']) && !$results['valid']) {
-			$this->admin_notices['error'] = $this->render_error_messages($results['errors']->errors);
+			$this->admin_notices['error'] = $this->_render_error_messages($results['errors']->errors);
 		}
 		return $results['valid'];
 	}

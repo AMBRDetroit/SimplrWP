@@ -7,19 +7,20 @@ class FrontEnd {
 		'object' => null,
 		'base_slug' => 'object',
     	'object_slug' => '[id]',
-		'single_template_file' => SIMPLRWP_PATH . 'templates/front_end/view_object.php',
-		'object_not_found_template_file' => SIMPLRWP_PATH . 'templates/front_end/not_found_object.php',
+		'single_template_file' => '',
+		'object_not_found_template_file' => '',
 		'list_page_settings' => array(
 			'page_slug' => array('page'),
 			'page_order_by' => 'id',
 			'page_order' => 'asc',
 			'objects_per_page' => 10,
-			'template_file' => SIMPLRWP_PATH . 'templates/front_end/list_objects.php'
-		)
+			'template_file' => ''
+		),
+		'single_template_sub_pages' => array()
 	);
 	
 	protected $sub_page_settings = array(
-		'template_file' => SIMPLRWP_PATH . 'templates/front_end/list_objects.php',
+		'template_file' => '',
 		'slug_keys' => array('page'),
 		'prepare_query_callback' => null
 	);
@@ -35,6 +36,12 @@ class FrontEnd {
 	protected $sub_pages = array();
 	
 	public function __construct($settings = array()) {
+		// set default template files
+		$this->settings['single_template_file'] = SIMPLRWP_PATH . 'templates/front_end/view_object.php';
+		$this->settings['object_not_found_template_file'] = SIMPLRWP_PATH . 'templates/front_end/not_found_object.php';
+		$this->settings['list_page_settings']['template_file'] = SIMPLRWP_PATH . 'templates/front_end/list_objects.php';
+		$this->sub_page_settings['template_file'] = SIMPLRWP_PATH . 'templates/front_end/list_objects.php';
+
 		// update front end settings
 		$this->settings = array_replace_recursive($this->settings, $settings);
 		
@@ -64,15 +71,22 @@ class FrontEnd {
 		}
 	}
 	
+	public function get_object() {
+		return $this->settings['object'];
+	}
+	
 	public function add_rewrite_rules() {
 		add_rewrite_endpoint($this->settings['base_slug'], EP_ROOT);
 	}
 	
 	public function load_template($template) {
 		global $wp_query, $single_object;
+		
 	    // if the correct query parameter exists, load a template
 	    if ( isset( $wp_query->query_vars[$this->settings['base_slug']] ) ) {
+	    	
 	    	$query_var = explode('/',$wp_query->query_vars[$this->settings['base_slug']]);
+	    	
 	    	// let's assume the first query var is the ID
 	    	$id = $query_var[0];
 	    	
@@ -89,6 +103,7 @@ class FrontEnd {
 	    	
 	    	// if the value of the query parameter exists, load the single template
 	    	if( !empty($id) && !in_array(implode('-',array_keys($url_parameters)), array_keys($this->sub_pages)) ) {
+	    		
 	    		// get query fields for object
 	    		preg_match_all('/\[([\w-_]*)\]*([\w-_]*)/i', $this->settings['object_slug'], $query_fields);
 	    		$query_keys = $query_fields[1];
@@ -126,14 +141,26 @@ class FrontEnd {
 					if(!empty($results)) {
 						$single_object = $this->settings['object'];
 						$single_object->set_id_and_retrieve_data($results[0]['id']);
+						
+						// run the base slug hook before loading the template
+						do_action('before_single_template_' . $this->settings['base_slug'], $this );
+						
+						// return a single sub page template, if exists
+						if(sizeof($query_var)>1) {
+							if(isset($this->settings['single_template_sub_pages'][$query_var[1]])) {
+								return $this->settings['single_template_sub_pages'][$query_var[1]];
+							}
+						}
+						// else just return the single template
 						return $this->settings['single_template_file'];
 					}
 	    		}
 	    		// object not found, return not found template
 	    		return $this->settings['object_not_found_template_file'];
+	    		
 	    	// since this is a sub page, render accordingly 
 	    	} else {
-	    		return $this->render_sub_page($url_parameters);	
+	    		return $this->_render_sub_page($url_parameters);	
 	    	}
 	    }
 	    return $template;
@@ -165,7 +192,15 @@ class FrontEnd {
 		$this->sub_pages[implode('-',$settings['slug_keys'])] = array_replace_recursive($this->sub_page_settings, $settings);
 	}
 	
-	private function render_sub_page($url_parameters = array()) {
+	public function before_single_front_end_template($callback) {
+		add_action('before_single_template_' . $this->settings['base_slug'], $callback, 10, 1);
+	}
+	
+	public function before_sub_page_front_end_template($slug_keys = array(), $callback) {
+		add_action('before_single_template_' . $this->settings['base_slug'] . '_' . implode('_', $slug_keys), $callback, 10, 1);
+	}
+	
+	private function _render_sub_page($url_parameters = array()) {
 		global $object_collection; 
 		
 		if(!empty($url_parameters)) {
@@ -182,6 +217,9 @@ class FrontEnd {
 				$new_object = $this->settings['object']->get_unique_name();
 				$object_collection[$key] = new $new_object($current_object['id']);
 			}
+			
+			// run the sub page hook before loading the template
+			do_action('before_single_template_' . $this->settings['base_slug'] . '_' . implode('_', array_keys($url_parameters)), $this );
 			
 			// return the associated list template
 			return $this->sub_pages[implode('-',array_keys($url_parameters))]['template_file'];

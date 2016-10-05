@@ -212,6 +212,28 @@ class Object {
 	}
 	
 	/**
+	 * This returns the object's updated at value, with formatting
+	 *
+	 * @return string
+	 *
+	 * @since 2016-10-03
+	 */
+	public function get_updated_at($format = 'F j, Y') {
+		return date($format, strtotime($this->updated_at));
+	}
+	
+	/**
+	 * This returns the object's create at value, with formatting
+	 *
+	 * @return string
+	 *
+	 * @since 2016-10-03
+	 */
+	public function get_created_at($format = 'F j, Y') {
+		return date($format, strtotime($this->created_at));
+	}
+	
+	/**
 	 * This gets the labels of all the fields associated to this object.
 	 *
 	 * @return array
@@ -269,6 +291,9 @@ class Object {
 				$this->id = $wpdb->insert_id;
 			}
 			$this->_retrieve_db_data();
+			
+			// get all the field data
+			$result['data']  = $this->get();
 		}
 		// data didn't validate, return error results
 		return $result;

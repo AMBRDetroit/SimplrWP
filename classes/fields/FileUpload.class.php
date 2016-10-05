@@ -17,12 +17,16 @@ class FileUpload extends Field {
 			'basedir' => WP_CONTENT_DIR,
 			'baseurl' => WP_CONTENT_URL,
 			'subdir' => '/wdi_product_pdfs',
-			'path' => WP_CONTENT_DIR . '/uploads',
-			'url' => WP_CONTENT_URL . '/uploads'
+			'path' => '',
+			'url' => ''
 		)
  	);
 	
 	public function __construct($options){
+		// set default path and url for uploads
+		$this->default_file_upload_settings['path'] = WP_CONTENT_DIR . '/uploads';
+		$this->default_file_upload_settings['url'] = WP_CONTENT_URL . '/uploads';
+
 		// load defaults
 		$this->settings = array_replace_recursive($this->settings, $this->default_file_upload_settings);
 		// pass along all options to parent

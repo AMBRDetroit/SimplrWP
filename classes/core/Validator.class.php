@@ -132,6 +132,27 @@ class Validator {
 	}
 	
 	/**
+	 * This function allows you generate the rendered messages for the data based on a SimplrWP Object
+	 *
+	 * @param  array $validated_results The results of the validated data
+	 *
+	 * @param  object $object This is the SimplrWP Object to render the error messages with
+	 *
+	 * @since 2016-09-16
+	 */
+	public function render($wp_error, $object) {
+		$rendered = new \WP_Error;
+		if(!isset($wp_error))
+			return $rendered;
+		
+		foreach($wp_error->errors as $field => $message) {
+			$rendered->add($field, str_replace('[field_name]', $object->fields[$field]->get_label(), $message));
+		}
+		return $rendered;
+	}
+	
+	
+	/**
 	 * This function loads the default rules.  Called upon instantiation of the Validator.
 	 *
 	 * @since 2016-08-10
