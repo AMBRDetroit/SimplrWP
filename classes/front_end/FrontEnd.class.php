@@ -142,7 +142,7 @@ class FrontEnd {
 						$single_object->set_id_and_retrieve_data($results[0]['id']);
 
 						// run the base slug hook before loading the template
-						do_action('before_single_template_' . $this->settings['base_slug'], $single_object );
+						do_action('before_single_template_' . $this->settings['base_slug'], $this );
 
 						// return a single sub page template, if exists
 						if(sizeof($query_var)>1) {
