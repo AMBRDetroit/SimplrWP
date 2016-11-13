@@ -57,16 +57,16 @@ class FrontEnd {
 		if($this->settings['list_page_settings']) {
 			// add sub page for list of objects
 			$this->add_sub_page(array(
-					'template_file' => $this->settings['list_page_settings']['template_file'],
-					'slug_keys' => $this->settings['list_page_settings']['page_slug'],
-					'prepare_query_callback' => function($query_params) {
-						return array(
-								'order_by' => $this->settings['list_page_settings']['page_order_by'],
-								'order' => $this->settings['list_page_settings']['page_order'],
-								'limit' => $this->settings['list_page_settings']['objects_per_page'],
-								'offset' => $this->settings['list_page_settings']['objects_per_page']*($query_params['page']-1)
-						);
-					}
+				'template_file' => $this->settings['list_page_settings']['template_file'],
+				'slug_keys' => $this->settings['list_page_settings']['page_slug'],
+				'prepare_query_callback' => function($query_params) {
+					return array(
+						'order_by' => $this->settings['list_page_settings']['page_order_by'],
+						'order' => $this->settings['list_page_settings']['page_order'],
+						'limit' => $this->settings['list_page_settings']['objects_per_page'],
+						'offset' => $this->settings['list_page_settings']['objects_per_page']*($query_params['page']-1)
+					);
+				}
 			));
 		}
 	}
@@ -97,6 +97,7 @@ class FrontEnd {
 				for($i=0; $i<sizeof($query_var); $i+=2) {
 					$value = (($i+1)==sizeof($query_var)) ? null : $query_var[$i+1];
 					$url_parameters[$query_var[$i]] = $value;
+					set_query_var($query_var[$i], $value);
 				}
 			}
 
@@ -162,6 +163,7 @@ class FrontEnd {
 				 
 				// since this is a sub page, render accordingly
 			} else {
+				$single_object = $this->settings['object'];
 				$sub_page_template = $this->_render_sub_page($url_parameters);
 				$this->_set_wp_page_template($sub_page_template);
 				return $sub_page_template;

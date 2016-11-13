@@ -11,7 +11,8 @@ class Admin {
 		'position' => 30,
 		'admin_list' => array(
 			'primary_field' => null,
-			'items_per_page' => 10
+			'items_per_page' => 10,
+			'query_fields' => array()
 		)
 	);
 	
@@ -97,7 +98,7 @@ class Admin {
 	}
 	
 	public function add_sub_menu($sub_menu = null) {
-		$this->sub_menus[$sub_menu['id']] = $sub_menu;
+		$this->sub_menus[] = $sub_menu;
 		
 	}
 	
@@ -164,8 +165,7 @@ class Admin {
 	}
 	
 	public function render_sub_menu() {
-		// render submenu template
-		include $this->sub_menus[$_GET['page']]['template'];
+		// TODO
 	}
 	
 	public function get_admin_unique_name() {
@@ -210,5 +210,6 @@ class Admin {
 		//include the admin footer HTML
 		include SIMPLRWP_PATH . 'templates/wp_admin/admin_foot.php';
 	}	
+
 }
 ?>

@@ -102,7 +102,7 @@ class ObjectQuery {
 		
 		$query = "SELECT * FROM " . $this->object->get_db_table_name() . $where_clause . " ORDER BY " . $options['order_by'] . " " . $options['order'] . $limit; 
 		
-		return $wpdb->get_results( $query, ARRAY_A );
+		return apply_filters('simplrwp_query_results-' . $this->object->get_unique_name(), $wpdb->get_results( $query, ARRAY_A ));
 	}
 	
 	/**

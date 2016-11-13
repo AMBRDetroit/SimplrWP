@@ -17,7 +17,7 @@ class Text extends Field {
 		echo '<div class="field">';
 			echo '<label class="simplrwp--label">' . $this->get_label() . '</label>';
 			if($this->settings['read_only']){
-				echo '<p>' . $this->get_value() . '</p>';
+				echo '<p>' . $this->render_value() . '</p>';
 			}else{
 				echo '<input class="large-text" name="' . $this->get_name() . '" type="text" value="' . $this->get_value() . '">';
 			}

@@ -41,8 +41,30 @@ class ObjectList extends \WP_List_Table {
 		if(isset($_GET['paged'])) {
 			$query_options['offset'] = ($_GET['paged']-1) * $this->options['items_per_page'];
 		}
+		if(isset($_GET['s']) && !empty($_GET['s'])) {
+			$query_options['where_args'] = array(
+				'relation' => 'OR'
+			);
+			foreach($this->options['query_fields'] as $field) {
+				$query_options['where_args'][] = array(
+					'key' => $field,
+					'value' => $_GET['s'],
+					'compare' => 'LIKE'
+				);
+			}
+		}
+			
 		$query_options['limit'] = $this->options['items_per_page'];
 		$this->items = $query_object->query($query_options);
+		
+		foreach($this->items as &$item) {
+			$object_name = $this->object->get_unique_name();
+			$object = new $object_name($item['id']);
+			foreach($item as $field => $value) {
+				if(isset($object->fields[$field]))
+					$item[$field] = $object->fields[$field]->render_value();
+			}
+		}
 		
 		$this->set_pagination_args( array(
 			'total_items' => $query_object->total_number_of_db_objects(),
@@ -52,9 +74,9 @@ class ObjectList extends \WP_List_Table {
 	
 	public function column_default( $item, $column_name ) {
 		if($column_name == $this->options['primary_field']) {
-	
 			return '<a href="?page='.$this->object->get_unique_name().'&id=' . $item['id'] . '">' . $item[$column_name] . '</a>';
 		}
+
 		return $item[ $column_name ];
 	}
 	
@@ -66,6 +88,14 @@ class ObjectList extends \WP_List_Table {
 	  	return array(
 	    	'delete' => 'Delete'
 	  	);
+	}
+	
+	public function get_object() {
+		return $this->object;
+	}
+	
+	public function get_options() {
+		return $this->options;
 	}
 	
 }

@@ -9,7 +9,7 @@ namespace SimplrWP\Fields;
  * ```php
  *``` 
  */
-class Field {
+abstract class Field {
 	
 	// default settings
 	protected $settings = array(
@@ -22,12 +22,15 @@ class Field {
 		),
 		'before_save_validations' => array('not_empty'),
 		'value' => '',
-		'name' => ''
+		'name' => '',
+		'render_value' => false
 	);
 	
 	
 	// setup field
 	public function __construct($options =  array()) {
+		// set default get value function
+		$this->settings['render_value'] = function($value) { return $value; };
 		// don't merge validations, replace
 		if(isset($options['before_save_validations']))
 			$this->settings['before_save_validations'] = $options['before_save_validations'];
@@ -48,6 +51,10 @@ class Field {
 	
 	public function get_value() {
 		return $this->settings['value'];
+	}
+	
+	public function render_value() {
+		return $this->settings['render_value']($this->settings['value']);
 	}
 	
 	public function get_label() {
