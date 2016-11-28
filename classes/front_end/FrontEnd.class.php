@@ -14,7 +14,8 @@ class FrontEnd {
 			'page_order_by' => 'id',
 			'page_order' => 'asc',
 			'objects_per_page' => 10,
-			'template_file' => ''
+			'template_file' => '',
+			'prepare_query_callback' => null
 		),
 		'single_template_sub_pages' => array()
 	);
@@ -59,7 +60,7 @@ class FrontEnd {
 			$this->add_sub_page(array(
 				'template_file' => $this->settings['list_page_settings']['template_file'],
 				'slug_keys' => $this->settings['list_page_settings']['page_slug'],
-				'prepare_query_callback' => function($query_params) {
+				'prepare_query_callback' => $this->settings['list_page_settings']['prepare_query_callback'] ? $this->settings['list_page_settings']['prepare_query_callback'] : function($query_params) {
 					return array(
 						'order_by' => $this->settings['list_page_settings']['page_order_by'],
 						'order' => $this->settings['list_page_settings']['page_order'],
