@@ -26,7 +26,7 @@ class Checkbox extends Field {
 	public function wp_admin_render_field() {
 		echo '<div class="field">';
 			echo '<label class="simplrwp--label">' . $this->get_label() . '</label>';
-			if(is_array($this->get_value()))
+			if(is_string($this->get_value()))
 				$choices = unserialize($this->get_value());
 			else
 				$choices = array();
