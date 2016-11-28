@@ -9,6 +9,7 @@ class Admin {
 		'capability' => 'manage_options',
 		'icon' => 'dashicons-lightbulb',
 		'position' => 30,
+		'parent_slug' => false,
 		'admin_list' => array(
 			'primary_field' => null,
 			'sortable_field' => false,
@@ -35,7 +36,7 @@ class Admin {
 	public function __construct($options = array()) {
 		$this->options = array_replace_recursive($this->options, $options);
 		
-		add_action( 'admin_menu', array(&$this, 'render_menus') );
+		add_action( 'admin_menu', array(&$this, 'render_menus'), 105 );
 		
 		add_action( 'add_meta_boxes', array(&$this, 'render_metaboxes') );
 		
@@ -176,17 +177,31 @@ class Admin {
 	}
 	
 	public function render_menus() {
-		add_menu_page( $this->options['object']->get_labels()['plural'], $this->options['object']->get_labels()['plural'], $this->options['capability'], $this->options['object']->get_unique_name(), array(&$this, 'list_objects_callback'), $this->options['icon'], $this->options['position'] );
-		
-		foreach($this->sub_menus as $sub_menu) {
+		if(!$this->options['parent_slug']) {
+			add_menu_page( $this->options['object']->get_labels()['plural'], $this->options['object']->get_labels()['plural'], $this->options['capability'], $this->options['object']->get_unique_name(), array(&$this, 'list_objects_callback'), $this->options['icon'], $this->options['position'] );
+			
+			foreach($this->sub_menus as $sub_menu) {
+				add_submenu_page(
+					$this->options['object']->get_unique_name(),
+					$sub_menu['label'],
+					$sub_menu['label'],
+					'manage_options',
+					$sub_menu['id'],
+					array(&$this, 'render_sub_menu')
+				);
+			}
+		} else {
 			add_submenu_page(
+				$this->options['parent_slug'],
+				$this->options['object']->get_labels()['plural'],
+				$this->options['object']->get_labels()['plural'],
+				$this->options['capability'],
 				$this->options['object']->get_unique_name(),
-				$sub_menu['label'],
-				$sub_menu['label'],
-				'manage_options',
-				$sub_menu['id'],
-				array(&$this, 'render_sub_menu') );
+				array(&$this, 'list_objects_callback')
+			);
 		}
+		
+		
 	}
 	
 	public function render_sub_menu() {
