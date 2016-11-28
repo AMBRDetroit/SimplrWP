@@ -11,6 +11,7 @@ class Admin {
 		'position' => 30,
 		'admin_list' => array(
 			'primary_field' => null,
+			'sortable_field' => false,
 			'items_per_page' => 10,
 			'query_fields' => array()
 		)
@@ -41,6 +42,11 @@ class Admin {
 		add_action( 'admin_enqueue_scripts', array(&$this, 'load_admin_scripts'));
 		
 		add_action( 'admin_notices', array(&$this, 'display_admin_notices') );
+		
+		// load ajax call for sortable field, if necessary
+		if($this->options['admin_list']['sortable_field']) {
+			add_action('wp_ajax_simplrwp_sortable', array(&$this, 'save_object_sort_order') );
+		}
 		
 		// delete the object
 		if(isset($_GET['delete']) && !empty($_GET['id'])) {
@@ -95,6 +101,25 @@ class Admin {
 	public function load_admin_scripts() {
 		wp_enqueue_style( 'simplrwp-metabox', SIMPLRWP_URL . 'assets/css/simplrwp-metabox.css' );
 		wp_enqueue_script( 'post' );
+		
+		if($this->options['admin_list']['sortable_field']) {
+			wp_enqueue_script( 'simplrwp-sortable', SIMPLRWP_URL . 'assets/js/wp_admin/simplrwp-sortable.js', array('jquery') );
+			wp_localize_script( 'simplrwp-sortable', 'simplrwp_sortable', array(
+				'api_root' => esc_url_raw( admin_url( 'admin-ajax.php' ) ),
+				'simplrwp_url' => SIMPLRWP_URL,
+				'sortable_field' => $this->options['admin_list']['sortable_field']
+			) );
+		}
+	}
+	
+	public function save_object_sort_order() {
+		foreach($_GET['objectSortOrder'] as $order => $objectID) {
+			$simplrwp_obj = new $_GET['simplrobj']($objectID);
+			$simplrwp_obj->update(array(
+				$this->options['admin_list']['sortable_field'] => $order
+			));
+		}
+		wp_send_json(true);
 	}
 	
 	public function add_sub_menu($sub_menu = null) {

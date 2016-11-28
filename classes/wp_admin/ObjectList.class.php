@@ -61,6 +61,10 @@ class ObjectList extends \WP_List_Table {
 			$object_name = $this->object->get_unique_name();
 			$object = new $object_name($item['id']);
 			foreach($item as $field => $value) {
+				if($field==$this->options['sortable_field']) {
+					$item[$field] = '<div class="dashicons-before dashicons-sort" data-id="' . $item['id'] . '"><br></div>';
+					continue;
+				}
 				if(isset($object->fields[$field]))
 					$item[$field] = $object->fields[$field]->render_value();
 			}
