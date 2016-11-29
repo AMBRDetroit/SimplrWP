@@ -36,7 +36,7 @@ class Admin {
 	public function __construct($options = array()) {
 		$this->options = array_replace_recursive($this->options, $options);
 		
-		add_action( 'admin_menu', array(&$this, 'render_menus'), 105 );
+		add_action( 'admin_menu', array(&$this, 'render_menus'), (!$this->options['parent_slug']) ? 10 : 105 );
 		
 		add_action( 'add_meta_boxes', array(&$this, 'render_metaboxes') );
 		
@@ -178,6 +178,7 @@ class Admin {
 	
 	public function render_menus() {
 		if(!$this->options['parent_slug']) {
+			//echo'<pre>';var_dump($this->options['object']->get_unique_name());die;
 			add_menu_page( $this->options['object']->get_labels()['plural'], $this->options['object']->get_labels()['plural'], $this->options['capability'], $this->options['object']->get_unique_name(), array(&$this, 'list_objects_callback'), $this->options['icon'], $this->options['position'] );
 			
 			foreach($this->sub_menus as $sub_menu) {
