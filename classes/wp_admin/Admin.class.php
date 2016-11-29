@@ -53,7 +53,7 @@ class Admin {
 		if(isset($_GET['delete']) && !empty($_GET['id'])) {
 			$this->options['object']->set_id_and_retrieve_data($_GET['id']);
 			if($this->options['object']->delete()) {
-				wp_redirect($_SERVER['PHP_SELF'] . '?page=' . $this->options['object']->get_unique_name() . '&deleted');
+				wp_redirect($_SERVER['PHP_SELF'] . '?page=' . $_GET['page'] . '&deleted');
 			}
 		}
 		
