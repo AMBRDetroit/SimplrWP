@@ -40,9 +40,15 @@ jQuery(function($){
 		    	// Show preview image
 			    image_container.removeClass( 'hidden' );
 	    	} else {
-	    		$('.file-title').text(attachment.title);
-	    		$('.file-name').html('<a href="' + attachment.url + '" target="_blank">' + attachment.filename + '</a>');
-	    		$('.file-size').text(attachment.filesize);
+	    		var file_html = '<img class="file-image" src="' + simplrwp_media_uploader.simplrwp_url + 'assets/images/document.png" />';
+				file_html += '<ul>';
+				file_html += '<li><strong><span class="file-title">' + attachment.title + '</span></strong></li>';
+				file_html += '<li><strong>File Name:</strong> <span class="file-name"><a href="' + attachment.url + '" target="_blank">' + attachment.filename + '</a></span></li>';
+				file_html += '<li><strong>File Size:</strong> <span class="file-size">' + attachment.filesize + '</span></li>';
+				file_html += '</ul>';
+				
+	    		$('.file-container').html(file_html);
+	    		
 	    		// Show the preview file
 			    file_container.removeClass( 'hidden' )
 	    	}

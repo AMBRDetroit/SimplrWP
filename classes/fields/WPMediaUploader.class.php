@@ -65,6 +65,9 @@ class WPMediaUploader extends Field {
 		wp_enqueue_style( 'simplrwp_wp-media-uploader', SIMPLRWP_URL . 'assets/css/simplrwp-media_uploader.css' );
 		
 		wp_enqueue_script( 'simplrwp_wp-media-uploader', SIMPLRWP_URL . 'assets/js/fields/WPMediaUploader.js' );
+		wp_localize_script( 'simplrwp_wp-media-uploader', 'simplrwp_media_uploader', array(
+			'simplrwp_url' => SIMPLRWP_URL,
+		) );
 	}
 
 	public function get_img_url(){
