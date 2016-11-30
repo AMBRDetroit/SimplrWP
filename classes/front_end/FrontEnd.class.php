@@ -35,6 +35,11 @@ class FrontEnd {
 	);
 	
 	protected $sub_pages = array();
+	
+	protected $pagination_params = array(
+		'total_pages' => 0,
+		'current_page' => 0
+	);
 
 	public function __construct($settings = array()) {
 		// set default template files
@@ -225,7 +230,12 @@ class FrontEnd {
 			$object_query = new \SimplrWP\Core\ObjectQuery($this->settings['object']);
 				
 			$query_results = $object_query->query(array_replace_recursive($this->sub_page_query_settings, $query_settings($url_parameters)) );
-				
+			
+			$this->pagination_params = array(
+				'total_pages' => ceil($object_query->total_number_of_last_query_objects()/$this->settings['list_page_settings']['objects_per_page']),
+				'current_page' => $url_parameters['page']
+			);
+			
 			// create objects for each result
 			$object_collection = array();
 			foreach($query_results as $key => $current_object) {
@@ -240,5 +250,9 @@ class FrontEnd {
 			return $this->sub_pages[implode('-',array_keys($url_parameters))]['template_file'];
 		}
 		return $this->settings['object_not_found_template_file'];
+	}
+	
+	public function get_pagination_params() {
+		return $this->pagination_params;
 	}
 }

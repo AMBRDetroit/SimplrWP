@@ -51,6 +51,13 @@ class ObjectQuery {
 	protected $total_num_of_db_objects = null;
 	
 	/*
+	 * This is the total number of objects on last query
+	 *
+	 * @var integer
+	 */
+	protected $total_num_of_last_query_objects = null;
+	
+	/*
 	 * This is the object type to be queried
 	 *
 	 * @var integer
@@ -102,6 +109,9 @@ class ObjectQuery {
 		
 		$query = "SELECT * FROM " . $this->object->get_db_table_name() . $where_clause . " ORDER BY " . $options['order_by'] . " " . $options['order'] . $limit; 
 		
+		// this sets the total number of objects on the query (no limit)
+		$this->total_num_of_last_query_objects = $wpdb->get_var("SELECT COUNT(*) FROM " . $this->object->get_db_table_name() . $where_clause);
+		
 		return apply_filters('simplrwp_query_results-' . $this->object->get_unique_name(), $wpdb->get_results( $query, ARRAY_A ));
 	}
 	
@@ -118,6 +128,17 @@ class ObjectQuery {
 		$this->total_num_of_db_objects = $wpdb->get_var("SELECT COUNT(*) FROM " . $this->object->get_db_table_name());
 		
 		return $this->total_num_of_db_objects;
+	}
+	
+	/**
+	 * This returns the total number of objects based on the last query
+	 *
+	 * @return integer
+	 *
+	 * @since 2016-11-30
+	 */
+	public function total_number_of_last_query_objects() {
+		return $this->total_num_of_last_query_objects;
 	}
 	
 	/**
