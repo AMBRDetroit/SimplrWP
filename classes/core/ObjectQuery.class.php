@@ -162,13 +162,20 @@ class ObjectQuery {
 	 * @since 2016-07-18
 	 */
 	protected function _generate_sql_from_parameters($options) {
-		$relation = '';
+		$relation = 'AND';
 		if(array_key_exists('relation', $options) ) {
-			$relation = array_shift($options);
+			$relation = $options['relation'];
+			unset($options['relation']);
 		}
+		
 		$sql = array();
 		foreach($options as $clause) {
-			$sql[] = $this->_generate_sql_where_clause($clause);
+			$is_sub_clause = !array_key_exists('key', $clause) && !array_key_exists('value', $clause);
+			if($is_sub_clause) {
+				$sql[] = '('. $this->_generate_sql_from_parameters($clause) . ')';
+			} else {
+				$sql[] = $this->_generate_sql_where_clause($clause);
+			}
 		}
 		$sql = implode(' ' . $relation . ' ', $sql);
 	

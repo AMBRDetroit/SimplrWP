@@ -115,8 +115,8 @@ class Admin {
 	
 	public function save_object_sort_order() {
 		foreach($_GET['objectSortOrder'] as $order => $objectID) {
-			$simplrwp_obj = new $_GET['simplrobj']($objectID);
-			$simplrwp_obj->update(array(
+			$simplrwp_obj = new $_GET['simplrobj'](intval($objectID));
+			$result = $simplrwp_obj->update(array(
 				$this->options['admin_list']['sortable_field'] => $order
 			));
 		}

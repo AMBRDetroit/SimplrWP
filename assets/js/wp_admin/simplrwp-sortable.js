@@ -4,7 +4,7 @@
 		 $('.column-' + simplrwp_sortable.sortable_field).width('75px');
 		 
 		 $( "#the-list" ).sortable().disableSelection().on( "sortstop", function( event, ui ) {
-			 // show loading animation
+			 // start loading animation
 			 loadSimplrWPReorder(event.srcElement, true);
 			 
 			 var newSortOrder = {};
@@ -13,7 +13,6 @@
 				 var objID = $('.dashicons-sort', $('.ui-sortable-handle').eq(rowID)).data('id');
 				 newSortOrder[rowID] = objID;
 			 }
-			 
 			 $.get(simplrwp_sortable.api_root, {
 					action : 'simplrwp_sortable',
 					simplrobj : getUrlParameter('page'),

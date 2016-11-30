@@ -3,6 +3,7 @@
 	<?php if($this->options['is_manageable']): ?> 
 		<a href="?page=<?php echo $this->options['object']->get_unique_name(); ?>&id=" class="page-title-action">Add New <?php echo $this->options['object']->get_labels()['singular']; ?></a>
 	<?php endif; ?>
+	<?php echo apply_filters('after_list_headline-' . $this->options['object']->get_unique_name(), ''); ?>
 </h1>
 <?php if(!empty($object_admin_list->get_options()['query_fields'] )) { ?>
 <form method="get">
