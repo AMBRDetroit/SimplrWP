@@ -60,14 +60,14 @@ class FrontEnd {
 			$this->add_sub_page(array(
 				'template_file' => $this->settings['list_page_settings']['template_file'],
 				'slug_keys' => $this->settings['list_page_settings']['page_slug'],
-				'prepare_query_callback' => $this->settings['list_page_settings']['prepare_query_callback'] ? $this->settings['list_page_settings']['prepare_query_callback'] : function($query_params) {
-					return array(
+				'prepare_query_callback' => function($query_params) {
+					return array_replace_recursive(array(
 						'order_by' => $this->settings['list_page_settings']['page_order_by'],
 						'order' => $this->settings['list_page_settings']['page_order'],
 						'limit' => $this->settings['list_page_settings']['objects_per_page'],
 						'offset' => $this->settings['list_page_settings']['objects_per_page']*($query_params['page']-1)
-					);
-				}
+					), $this->settings['list_page_settings']['prepare_query_callback']($query_params));
+				}	
 			));
 		}
 	}
@@ -223,7 +223,7 @@ class FrontEnd {
 			$query_settings = $this->sub_pages[implode('-',array_keys($url_parameters))]['prepare_query_callback'];
 				
 			$object_query = new \SimplrWP\Core\ObjectQuery($this->settings['object']);
-				
+			echo '<pre>';var_dump(array_replace_recursive($this->sub_page_query_settings, $query_settings($url_parameters)));die;	
 			$query_results = $object_query->query(array_replace_recursive($this->sub_page_query_settings, $query_settings($url_parameters)) );
 				
 			// create objects for each result
