@@ -223,7 +223,7 @@ class FrontEnd {
 			$query_settings = $this->sub_pages[implode('-',array_keys($url_parameters))]['prepare_query_callback'];
 				
 			$object_query = new \SimplrWP\Core\ObjectQuery($this->settings['object']);
-			echo '<pre>';var_dump(array_replace_recursive($this->sub_page_query_settings, $query_settings($url_parameters)));die;	
+				
 			$query_results = $object_query->query(array_replace_recursive($this->sub_page_query_settings, $query_settings($url_parameters)) );
 				
 			// create objects for each result
