@@ -14,7 +14,7 @@ A developer's framework for WordPress.
  3. Add a wp-admin interface to the objects (optional)
  4. Add a front-end interface to the objects with routing and templates (optional)
  
- **Important: This project is still in it's early stages and isn't ready for production sites yet**
+**Important: This project is still in it's early stages and isn't ready for production sites yet**
   
  # Quick Example
  
@@ -60,7 +60,7 @@ A developer's framework for WordPress.
  - WPEditor
  - WPMediaUploader
  
- Now that you have the object, we can create interfaces to the object.
+Now that you have the object, we can create interfaces to the object.
  
  Here's how to create an WP-Admin interface to the object:
  ```php
