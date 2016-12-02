@@ -149,7 +149,7 @@ Now that you have the object, we can create interfaces to the object.
  
  To access a field from the object:
  ```php
- $author_first_name = $current_author->fields['first_name']->get_value()
+ $author_first_name = $current_author->fields['first_name']->get_value();
  ```
  
  This is just a short introduction to SimplrWP.  
