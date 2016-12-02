@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Class SimplrWP\Core\Object</title>
+
+	<link rel="stylesheet" href="resources/bootstrap.min.css?973e37a8502921d56bc02bb55321f45b072b6f71">
+	<link rel="stylesheet" href="resources/style.css?49f43d3208c5d7e33fa16d36107a345bf11cc00d">
+
+</head>
+
+<body>
+	<nav id="navigation" class="navbar navbar-default navbar-fixed-top">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a href="index.html" class="navbar-brand">Overview</a>
+			</div>
+			<div class="collapse navbar-collapse">
+
+                <form id="search" class="navbar-form navbar-left" role="search">
+                    <input type="hidden" name="cx" value="">
+                    <input type="hidden" name="ie" value="UTF-8">
+                    <div class="form-group">
+                        <input type="text" name="q" class="search-query form-control" placeholder="Search">
+					</div>
+				</form>
+
+				<ul class="nav navbar-nav">
+					<li>
+						<a href="namespace-SimplrWP.Core.html" title="Summary of SimplrWP\Core"><span>Namespace</span></a>
+					</li>
+					<li class="active">
+<span>Class</span>					</li>
+
+
+
+
+
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div id="left">
+	<div id="menu">
+
+		<div id="groups">
+				<h3>Namespaces</h3>
+			<ul>
+					<li>
+						<a href="namespace-None.html">
+							None						</a>
+							</li>
+					<li class="active">
+						<a href="namespace-SimplrWP.html">
+							SimplrWP<span></span>
+						</a>
+							<ul>
+					<li class="active">
+						<a href="namespace-SimplrWP.Core.html">
+							Core						</a>
+							</li>
+					<li>
+						<a href="namespace-SimplrWP.Fields.html">
+							Fields						</a>
+							</li>
+					<li>
+						<a href="namespace-SimplrWP.FrontEnd.html">
+							FrontEnd						</a>
+							</li>
+					<li>
+						<a href="namespace-SimplrWP.WPAdmin.html">
+							WPAdmin						</a>
+							</li>
+								</ul></li>
+			</ul>
+		</div>
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li class="active"><a href="class-SimplrWP.Core.Object.html">Object</a></li>
+				<li><a href="class-SimplrWP.Core.ObjectQuery.html">ObjectQuery</a></li>
+				<li><a href="class-SimplrWP.Core.Validator.html">Validator</a></li>
+			</ul>
+
+
+
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+	<div id="rightInner">
+<div id="content" class="class">
+	<h1>Class Object</h1>
+
+
+	<div class="description">
+	<h2>Overview</h2>
+
+<p>The SimplrWP Object is similar to WordPress's Custom Post Type (CPT),
+but with more flexibility and control over the database structure, how
+they work within the WordPress Admin Dashboard, and how the object's
+data is validated.</p>
+
+<p>This object serves as a base and can be extended to create more complex
+objects for your project. By extending this class you can create virtually
+any time of object. While the object can be used directly, it is not recommended.</p>
+
+<h2>Examples</h2>
+
+<p>Here's an example on how you can extend this object to create your own:</p>
+
+<pre><span class="php-keyword1">class</span> Sample_Author <span class="php-keyword1">extends</span> SimplrWP\Core\Object {
+
+<span class="php-keyword1">public</span> <span class="php-keyword1">function</span> __construct(<span class="php-var">$id</span> = <span class="php-keyword1">null</span>) {
+
+<span class="php-var">$this</span>-&gt;latest_db_version = <span class="php-num">1</span>;
+
+<span class="php-var">$this</span>-&gt;fields = <span class="php-keyword1">array</span>(
+<span class="php-quote">'first_name'</span> =&gt; <span class="php-keyword1">new</span> SimplrWP\Fields\Text(<span class="php-keyword1">array</span>(<span class="php-quote">'label'</span> =&gt; <span class="php-quote">'First Name'</span>)),
+<span class="php-quote">'last_name'</span> =&gt; <span class="php-keyword1">new</span> SimplrWP\Fields\Text(<span class="php-keyword1">array</span>(<span class="php-quote">'label'</span> =&gt; <span class="php-quote">'Last Name'</span>))
+);
+
+<span class="php-var">$this</span>-&gt;labels = <span class="php-keyword1">array</span>(<span class="php-quote">'singular'</span> =&gt; <span class="php-quote">'Author'</span>,<span class="php-quote">'plural'</span> =&gt; <span class="php-quote">'Authors'</span>);
+
+parent::__construct(<span class="php-var">$id</span>);
+}
+
+}</pre>
+
+<p>As you can see, when you create a new object you can setup the attributes (fields)
+for the object.  Each field uses a SimplrWP Field type.  SimplrWP includes a set of default
+field types, but you can easily extend the platform to support your own field type.</p>
+
+<p>Once you've created your new object class, it's easy to use it.</p>
+
+<p>Here's an example of how to use your new object:</p>
+
+<pre><span class="php-var">$new_author</span> = <span class="php-keyword1">new</span> Sample_Author();</pre>
+
+<p>If you're trying to load an instance of the object from the database, you can instantiate
+the object like this:</p>
+
+<pre><span class="php-var">$current_author</span> = <span class="php-keyword1">new</span> SampleAuthor(<span class="php-num">1</span>); <span class="php-comment">//pass in the ID of the object</span></pre>
+	</div>
+
+
+
+
+
+
+
+
+
+	<div class="alert alert-info">
+		
+		
+		<b>Namespace:</b> <a href="namespace-SimplrWP.html">SimplrWP</a>\<a href="namespace-SimplrWP.Core.html">Core</a><br>
+		
+
+			<b>Located at</b> <a href="source-class-SimplrWP.Core.Object.html#3-447" title="Go to source code">classes/core/Object.class.php</a>
+		<br>
+	</div>
+
+
+
+		<div class="panel panel-default">
+			<div class="panel-heading"><h2>Methods summary</h2></div>
+			<table class="summary table table-bordered table-striped methods" id="methods">
+		<tr data-order="__construct" id="___construct">
+
+			<td class="attributes"><code>
+				 public 
+				
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#___construct">#</a>
+			<code><a href="source-class-SimplrWP.Core.Object.html#117-149" title="Go to source code">__construct</a>( <span>integer <var>$id</var> = <span class="php-keyword1">null</span></span> )</code>
+
+			<div class="description short">
+				<p>This is the constructor to instantiate the object.  To create an
+object with data from the database, just pass the object $id.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>This is the constructor to instantiate the object.  To create an
+object with data from the database, just pass the object $id.</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$id</var></dt>
+						<dd>The ID of the object.</dd>
+					</dl></div>
+
+
+
+					<h4>Since</h4>
+					<div class="list">
+							2016-07-13<br>
+					</div>
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="get_unique_name" id="_get_unique_name">
+
+			<td class="attributes"><code>
+				 public 
+				string
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_get_unique_name">#</a>
+			<code><a href="source-class-SimplrWP.Core.Object.html#151-160" title="Go to source code">get_unique_name</a>( )</code>
+
+			<div class="description short">
+				<p>This returns the name of the object.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>This returns the name of the object.</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						string
+					</div>
+
+
+					<h4>Since</h4>
+					<div class="list">
+							2016-07-13<br>
+					</div>
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="get_labels" id="_get_labels">
+
+			<td class="attributes"><code>
+				 public 
+				array
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_get_labels">#</a>
+			<code><a href="source-class-SimplrWP.Core.Object.html#162-171" title="Go to source code">get_labels</a>( )</code>
+
+			<div class="description short">
+				<p>This returns the labels of the object (singular and plural).</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>This returns the labels of the object (singular and plural).</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						array
+					</div>
+
+
+					<h4>Since</h4>
+					<div class="list">
+							2016-07-13<br>
+					</div>
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="get_db_table_name" id="_get_db_table_name">
+
+			<td class="attributes"><code>
+				 public 
+				string
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_get_db_table_name">#</a>
+			<code><a href="source-class-SimplrWP.Core.Object.html#173-182" title="Go to source code">get_db_table_name</a>( )</code>
+
+			<div class="description short">
+				<p>This returns the object's database table name</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>This returns the object's database table name</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						string
+					</div>
+
+
+					<h4>Since</h4>
+					<div class="list">
+							2016-07-15<br>
+					</div>
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="get_id" id="_get_id">
+
+			<td class="attributes"><code>
+				 public 
+				integer
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_get_id">#</a>
+			<code><a href="source-class-SimplrWP.Core.Object.html#184-193" title="Go to source code">get_id</a>( )</code>
+
+			<div class="description short">
+				<p>This returns the object's ID</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>This returns the object's ID</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						integer
+					</div>
+
+
+					<h4>Since</h4>
+					<div class="list">
+							2016-07-15<br>
+					</div>
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="get" id="_get">
+
+			<td class="attributes"><code>
+				 public 
+				array
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_get">#</a>
+			<code><a href="source-class-SimplrWP.Core.Object.html#195-212" title="Go to source code">get</a>( )</code>
+
+			<div class="description short">
+				<p>This returns the object's data in key/value array</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>This returns the object's data in key/value array</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						array
+					</div>
+
+
+					<h4>Since</h4>
+					<div class="list">
+							2016-07-15<br>
+					</div>
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="get_updated_at" id="_get_updated_at">
+
+			<td class="attributes"><code>
+				 public 
+				string
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_get_updated_at">#</a>
+			<code><a href="source-class-SimplrWP.Core.Object.html#214-223" title="Go to source code">get_updated_at</a>( <span> <var>$format</var> = <span class="php-quote">'F j, Y'</span></span> )</code>
+
+			<div class="description short">
+				<p>This returns the object's updated at value, with formatting</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>This returns the object's updated at value, with formatting</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						string
+					</div>
+
+
+					<h4>Since</h4>
+					<div class="list">
+							2016-10-03<br>
+					</div>
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="get_created_at" id="_get_created_at">
+
+			<td class="attributes"><code>
+				 public 
+				string
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_get_created_at">#</a>
+			<code><a href="source-class-SimplrWP.Core.Object.html#225-234" title="Go to source code">get_created_at</a>( <span> <var>$format</var> = <span class="php-quote">'F j, Y'</span></span> )</code>
+
+			<div class="description short">
+				<p>This returns the object's create at value, with formatting</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>This returns the object's create at value, with formatting</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						string
+					</div>
+
+
+					<h4>Since</h4>
+					<div class="list">
+							2016-10-03<br>
+					</div>
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="get_data_labels" id="_get_data_labels">
+
+			<td class="attributes"><code>
+				 public 
+				array
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_get_data_labels">#</a>
+			<code><a href="source-class-SimplrWP.Core.Object.html#236-249" title="Go to source code">get_data_labels</a>( )</code>
+
+			<div class="description short">
+				<p>This gets the labels of all the fields associated to this object.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>This gets the labels of all the fields associated to this object.</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						array
+					</div>
+
+
+					<h4>Since</h4>
+					<div class="list">
+							2016-07-13<br>
+					</div>
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="set_id_and_retrieve_data" id="_set_id_and_retrieve_data">
+
+			<td class="attributes"><code>
+				 public 
+				
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_set_id_and_retrieve_data">#</a>
+			<code><a href="source-class-SimplrWP.Core.Object.html#251-262" title="Go to source code">set_id_and_retrieve_data</a>( <span>integer <var>$id</var> = <span class="php-keyword1">null</span></span> )</code>
+
+			<div class="description short">
+				<p>This sets the objects ID and updates it with the most recent data
+from the database.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>This sets the objects ID and updates it with the most recent data
+from the database.</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$id</var></dt>
+						<dd>The ID of the object.</dd>
+					</dl></div>
+
+
+
+					<h4>Since</h4>
+					<div class="list">
+							2016-07-13<br>
+					</div>
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="update" id="_update">
+
+			<td class="attributes"><code>
+				 public 
+				array|boolean
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_update">#</a>
+			<code><a href="source-class-SimplrWP.Core.Object.html#264-300" title="Go to source code">update</a>( <span>array <var>$data</var> = <span class="php-keyword1">array</span>()</span> )</code>
+
+			<div class="description short">
+				<p>This update an object in the database, given the key/value pairs
+of data.  Before it is updated, the data is validated. If the object
+doesn't exist, it will br created.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>This update an object in the database, given the key/value pairs
+of data.  Before it is updated, the data is validated. If the object
+doesn't exist, it will br created.</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$data</var></dt>
+						<dd>The key/value pairs of data to update the object.</dd>
+					</dl></div>
+
+					<h4>Returns</h4>
+					<div class="list">
+						array|boolean
+					</div>
+
+
+					<h4>Since</h4>
+					<div class="list">
+							2016-07-13<br>
+					</div>
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="delete" id="_delete">
+
+			<td class="attributes"><code>
+				 public 
+				boolean
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_delete">#</a>
+			<code><a href="source-class-SimplrWP.Core.Object.html#302-317" title="Go to source code">delete</a>( )</code>
+
+			<div class="description short">
+				<p>This deletes the object from the database.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>This deletes the object from the database.</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						boolean
+					</div>
+
+
+					<h4>Since</h4>
+					<div class="list">
+							2016-07-13<br>
+					</div>
+
+
+			</div>
+			</div></td>
+		</tr>
+			</table>
+		</div>
+
+
+
+
+
+
+
+
+
+
+
+		<div class="panel panel-default">
+            <div class="panel-heading"><h2>Properties summary</h2></div>
+			<table class="summary table table-bordered table-striped properties" id="properties">
+		<tr data-order="id" id="$id">
+			<td class="attributes"><code>
+				protected  
+				
+			</code></td>
+
+			<td class="name">
+					<a href="source-class-SimplrWP.Core.Object.html#59" title="Go to source code"><var>$id</var></a>
+
+				<div class="description short">
+					
+				</div>
+
+				<div class="description detailed hidden">
+					
+
+				</div>
+			</td>
+			<td class="value">
+				<div>
+					<a href="#$id" class="anchor">#</a>
+					<code><span class="php-keyword1">null</span></code>
+				</div>
+			</td>
+		</tr>
+		<tr data-order="created_at" id="$created_at">
+			<td class="attributes"><code>
+				protected  
+				
+			</code></td>
+
+			<td class="name">
+					<a href="source-class-SimplrWP.Core.Object.html#66" title="Go to source code"><var>$created_at</var></a>
+
+				<div class="description short">
+					
+				</div>
+
+				<div class="description detailed hidden">
+					
+
+				</div>
+			</td>
+			<td class="value">
+				<div>
+					<a href="#$created_at" class="anchor">#</a>
+					<code><span class="php-keyword1">null</span></code>
+				</div>
+			</td>
+		</tr>
+		<tr data-order="updated_at" id="$updated_at">
+			<td class="attributes"><code>
+				protected  
+				
+			</code></td>
+
+			<td class="name">
+					<a href="source-class-SimplrWP.Core.Object.html#73" title="Go to source code"><var>$updated_at</var></a>
+
+				<div class="description short">
+					
+				</div>
+
+				<div class="description detailed hidden">
+					
+
+				</div>
+			</td>
+			<td class="value">
+				<div>
+					<a href="#$updated_at" class="anchor">#</a>
+					<code><span class="php-keyword1">null</span></code>
+				</div>
+			</td>
+		</tr>
+		<tr data-order="unique_name" id="$unique_name">
+			<td class="attributes"><code>
+				protected  
+				
+			</code></td>
+
+			<td class="name">
+					<a href="source-class-SimplrWP.Core.Object.html#80" title="Go to source code"><var>$unique_name</var></a>
+
+				<div class="description short">
+					
+				</div>
+
+				<div class="description detailed hidden">
+					
+
+				</div>
+			</td>
+			<td class="value">
+				<div>
+					<a href="#$unique_name" class="anchor">#</a>
+					<code><span class="php-keyword1">null</span></code>
+				</div>
+			</td>
+		</tr>
+		<tr data-order="db_table_name" id="$db_table_name">
+			<td class="attributes"><code>
+				protected  
+				
+			</code></td>
+
+			<td class="name">
+					<a href="source-class-SimplrWP.Core.Object.html#87" title="Go to source code"><var>$db_table_name</var></a>
+
+				<div class="description short">
+					
+				</div>
+
+				<div class="description detailed hidden">
+					
+
+				</div>
+			</td>
+			<td class="value">
+				<div>
+					<a href="#$db_table_name" class="anchor">#</a>
+					<code><span class="php-keyword1">null</span></code>
+				</div>
+			</td>
+		</tr>
+		<tr data-order="latest_db_version" id="$latest_db_version">
+			<td class="attributes"><code>
+				protected  
+				integer
+			</code></td>
+
+			<td class="name">
+					<a href="source-class-SimplrWP.Core.Object.html#96" title="Go to source code"><var>$latest_db_version</var></a>
+
+				<div class="description short">
+					
+				</div>
+
+				<div class="description detailed hidden">
+					
+
+				</div>
+			</td>
+			<td class="value">
+				<div>
+					<a href="#$latest_db_version" class="anchor">#</a>
+					<code><span class="php-num">1</span></code>
+				</div>
+			</td>
+		</tr>
+		<tr data-order="fields" id="$fields">
+			<td class="attributes"><code>
+				public  
+				array
+			</code></td>
+
+			<td class="name">
+					<a href="source-class-SimplrWP.Core.Object.html#104" title="Go to source code"><var>$fields</var></a>
+
+				<div class="description short">
+					
+				</div>
+
+				<div class="description detailed hidden">
+					
+
+				</div>
+			</td>
+			<td class="value">
+				<div>
+					<a href="#$fields" class="anchor">#</a>
+					<code><span class="php-keyword1">array</span>()</code>
+				</div>
+			</td>
+		</tr>
+		<tr data-order="labels" id="$labels">
+			<td class="attributes"><code>
+				protected  
+				array
+			</code></td>
+
+			<td class="name">
+					<a href="source-class-SimplrWP.Core.Object.html#112-115" title="Go to source code"><var>$labels</var></a>
+
+				<div class="description short">
+					
+				</div>
+
+				<div class="description detailed hidden">
+					
+
+				</div>
+			</td>
+			<td class="value">
+				<div>
+					<a href="#$labels" class="anchor">#</a>
+					<code><span class="php-keyword1">array</span>(
+    <span class="php-quote">'singular'</span> =&gt; <span class="php-quote">'Object'</span>,
+    <span class="php-quote">'plural'</span> =&gt; <span class="php-quote">'Objects'</span>   
+)</code>
+				</div>
+			</td>
+		</tr>
+			</table>
+		</div>
+
+
+
+
+
+
+</div>
+	</div>
+
+	<div id="footer">
+		 API documentation generated by <a href="http://apigen.org">ApiGen</a>
+	</div>
+</div>
+<script src="resources/combined.js"></script>
+<script src="elementlist.js"></script>
+</body>
+</html>
