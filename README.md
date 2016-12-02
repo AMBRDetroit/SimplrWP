@@ -9,18 +9,18 @@ A developer's framework for WordPress.
  It's important to understand how SimplrWP works.  SimplrWP allows you to create objects within the WordPress ecosystem.  These objects, by default, do not have any interface (in the theme or in wp-admin).  Once the object is created, you can create the wp-admin interface or the theme interface to these object. The beautiful thing is, the two user interfaces are independent of each other and you can enable either or both.
  
  In short here's how you use and interact with SimplrWP:
- 1. Create a SimplrWP object by extending core
+ 1. Create a SimplrWP object by extending core SimplrWP Object
  2. Add fields (attributes) to the object
  3. Add a wp-admin interface to the objects (optional)
  4. Add a front-end interface to the objects with routing and templates (optional)
  
 **Important: This project is still in it's early stages and isn't ready for production sites yet**
   
- # Quick Example
+# Quick Example
  
- First include the library:
+ First include the library in your theme's functions.php file or in a plugin file:
  ```php
- require_once('SimplrWp/init.php');
+ require_once('SimplrWP/init.php');
  ```
  
  Next let's create a SimplrWP object:
@@ -144,7 +144,7 @@ Now that you have the object, we can create interfaces to the object.
  If you're trying to load an instance of the object from the database, you can instantiate
  the object like this:
  ```php
- $current_author = new SampleAuthor(1); //pass in the ID of the object
+ $current_author = new Sample_Author(1); //pass in the ID of the object
  ```
  
  To access a field from the object:
@@ -152,5 +152,7 @@ Now that you have the object, we can create interfaces to the object.
  $author_first_name = $current_author->fields['first_name']->get_value()
  ```
  
- This is just a short introduction to SimplrWP.  More documentation and examples to come!
+ This is just a short introduction to SimplrWP.  
+ 
+ **More documentation and examples to come!**
  
