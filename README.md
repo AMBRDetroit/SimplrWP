@@ -60,7 +60,7 @@ A developer's framework for WordPress.
  - WPEditor
  - WPMediaUploader
  
- Now that you have the object, we can create interfaces to the object.
+Now that you have the object, we can create interfaces to the object.
  
  Here's how to create an WP-Admin interface to the object:
  ```php
