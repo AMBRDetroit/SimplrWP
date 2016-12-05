@@ -48,6 +48,9 @@ class FrontEnd {
 		$this->settings['list_page_settings']['template_file'] = SIMPLRWP_PATH . 'templates/front_end/list_objects.php';
 		$this->sub_page_settings['template_file'] = SIMPLRWP_PATH . 'templates/front_end/list_objects.php';
 		
+		// set default callback query function
+		$this->settings['list_page_settings']['prepare_query_callback'] = function($query_params) { return $query_params; };
+		
 		// update front end settings
 		$this->settings = array_replace_recursive($this->settings, $settings);
 
