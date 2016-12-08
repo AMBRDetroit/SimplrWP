@@ -317,6 +317,34 @@ class Object {
 	}
 	
 	/**
+	 * This returns the fields raw value
+	 *
+	 * @return mixed
+	 *
+	 * @since 2016-12-08
+	 */
+	public function get_field($field = '') {
+		if($field) {
+			return $this->fields[$field]->get_value();
+		}
+		return false;
+	}
+	
+	/**
+	 * This returns the fields rendered value
+	 *
+	 * @return mixed
+	 *
+	 * @since 2016-12-08
+	 */
+	public function render_field($field = '') {
+		if($field) {
+			return $this->fields[$field]->render_value();
+		}
+		return false;
+	}
+	
+	/**
 	 * This validates the potential data to be saved into the database.
 	 *
 	 * @param array $potential_data The potential data to be saved.
