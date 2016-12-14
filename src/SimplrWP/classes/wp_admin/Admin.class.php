@@ -33,6 +33,8 @@ class Admin {
 	
 	protected $sub_menus = array();
 	
+	protected $third_party_admin_scripts = null;
+	
 	public function __construct($options = array()) {
 		$this->options = array_replace_recursive($this->options, $options);
 		
@@ -111,6 +113,16 @@ class Admin {
 				'sortable_field' => $this->options['admin_list']['sortable_field']
 			) );
 		}
+		
+		if(is_callable($this->third_party_admin_scripts)) {
+			$closure_fxn = $this->third_party_admin_scripts;
+			$closure_fxn();
+		}
+			
+	}
+	
+	public function load_third_party_admin_script($closure_fxn = null) {
+		$this->third_party_admin_scripts = $closure_fxn;
 	}
 	
 	public function save_object_sort_order() {
