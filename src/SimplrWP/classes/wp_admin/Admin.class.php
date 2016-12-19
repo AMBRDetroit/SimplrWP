@@ -136,8 +136,7 @@ class Admin {
 	}
 	
 	public function add_sub_menu($sub_menu = null) {
-		$this->sub_menus[] = $sub_menu;
-		
+		$this->sub_menus[$sub_menu['id']] = $sub_menu;
 	}
 	
 	public function register_metabox($options = array()) {
@@ -218,7 +217,8 @@ class Admin {
 	}
 	
 	public function render_sub_menu() {
-		// TODO
+		// render submenu template
+		include $this->sub_menus[$_GET['page']]['template'];
 	}
 	
 	public function get_admin_unique_name() {
