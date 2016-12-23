@@ -48,9 +48,6 @@ class FrontEnd {
 		$this->settings['list_page_settings']['template_file'] = SIMPLRWP_PATH . 'templates/front_end/list_objects.php';
 		$this->sub_page_settings['template_file'] = SIMPLRWP_PATH . 'templates/front_end/list_objects.php';
 		
-		// set default callback query function
-		$this->settings['list_page_settings']['prepare_query_callback'] = function($query_params) { return $query_params; };
-		
 		// update front end settings
 		$this->settings = array_replace_recursive($this->settings, $settings);
 
@@ -234,12 +231,10 @@ class FrontEnd {
 				
 			$query_results = $object_query->query(array_replace_recursive($this->sub_page_query_settings, $query_settings($url_parameters)) );
 			
-			if($this->settings['list_page_settings']['objects_per_page']) {
-				$this->pagination_params = array(
-					'total_pages' => ceil($object_query->total_number_of_last_query_objects()/$this->settings['list_page_settings']['objects_per_page']),
-					'current_page' => $url_parameters['page']
-				);
-			}
+			$this->pagination_params = array(
+				'total_pages' => ceil($object_query->total_number_of_last_query_objects()/$this->settings['list_page_settings']['objects_per_page']),
+				'current_page' => $url_parameters['page']
+			);
 			
 			// create objects for each result
 			$object_collection = array();

@@ -14,8 +14,7 @@ class Admin {
 			'primary_field' => null,
 			'sortable_field' => false,
 			'items_per_page' => 10,
-			'query_fields' => array(),
-			'fields' => null
+			'query_fields' => array()
 		)
 	);
 	
@@ -33,6 +32,8 @@ class Admin {
 	protected $admin_notices = array();
 	
 	protected $sub_menus = array();
+	
+	protected $third_party_admin_scripts = null;
 	
 	public function __construct($options = array()) {
 		$this->options = array_replace_recursive($this->options, $options);
@@ -112,6 +113,16 @@ class Admin {
 				'sortable_field' => $this->options['admin_list']['sortable_field']
 			) );
 		}
+		
+		if(is_callable($this->third_party_admin_scripts)) {
+			$closure_fxn = $this->third_party_admin_scripts;
+			$closure_fxn();
+		}
+			
+	}
+	
+	public function load_third_party_admin_script($closure_fxn = null) {
+		$this->third_party_admin_scripts = $closure_fxn;
 	}
 	
 	public function save_object_sort_order() {
@@ -125,8 +136,7 @@ class Admin {
 	}
 	
 	public function add_sub_menu($sub_menu = null) {
-		$this->sub_menus[] = $sub_menu;
-		
+		$this->sub_menus[$sub_menu['id']] = $sub_menu;
 	}
 	
 	public function register_metabox($options = array()) {
@@ -207,7 +217,8 @@ class Admin {
 	}
 	
 	public function render_sub_menu() {
-		// TODO
+		// render submenu template
+		include $this->sub_menus[$_GET['page']]['template'];
 	}
 	
 	public function get_admin_unique_name() {

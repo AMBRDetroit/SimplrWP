@@ -50,7 +50,7 @@ require_once 'classes/front_end/FrontEnd.class.php';
  * navigate to the SimplrWP path.  Next, run the following command in
  * your terminal:
  * 
- * php apigen.phar generate -s ./  -d ./docs --template-theme bootstrap
+ * php apigen.phar generate -s ./  -d ./documentation --template-theme bootstrap
  * 
  * To view the documentation, navigate to the SimplrWP/documentation in your browser.
  * 

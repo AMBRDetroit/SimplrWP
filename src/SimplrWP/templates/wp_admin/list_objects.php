@@ -11,6 +11,4 @@
   	<?php $object_admin_list->search_box('Search ' . $object_admin_list->get_object()->get_labels()['plural'], 'simplrwp_q'); ?>
 </form>
 <?php } ?>
-<form method="post">
-	<?php echo $object_admin_list->display(); ?>
-</form>
+<?php echo $object_admin_list->display(); ?>

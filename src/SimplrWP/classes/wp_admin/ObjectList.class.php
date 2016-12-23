@@ -18,16 +18,11 @@ class ObjectList extends \WP_List_Table {
 	}
 	
 	public function get_columns() {
-		return array_merge(array('cb' => '<input type="checkbox" />'), $this->object->get_data_labels( $this->options['fields'] ) );
+		return array_merge(array('cb' => '<input type="checkbox" />'), $this->object->get_data_labels() );
 	}
 	
 	public function prepare_items($query_object = null) {
 		$this->object = $query_object->object;
-		
-		$action = $this->current_action();
-		if($action == 'delete') {
-			$this->delete_objects($_POST['woocommerce_saved_report']);
-		}
 	
 		if(empty($this->options['primary_field'])) {
 			reset($this->object->fields);
@@ -83,9 +78,7 @@ class ObjectList extends \WP_List_Table {
 	
 	public function column_default( $item, $column_name ) {
 		if($column_name == $this->options['primary_field']) {
-			$this->object->set_id_and_retrieve_data($item['id']);
-			$item_url = '?page='.$this->object->get_unique_name().'&id=' . $item['id'];
-			return '<a href="' . apply_filters('simplrwp_admin_list_primary_url-' . $this->object->get_unique_name(), $item_url, $this->object) . '">' . $item[$column_name] . '</a>';
+			return '<a href="?page='.$this->object->get_unique_name().'&id=' . $item['id'] . '">' . $item[$column_name] . '</a>';
 		}
 
 		return $item[ $column_name ];
@@ -107,13 +100,6 @@ class ObjectList extends \WP_List_Table {
 	
 	public function get_options() {
 		return $this->options;
-	}
-	
-	public function delete_objects($object_ids) {
-		foreach($object_ids as $object_id) {
-			$this->object->set_id_and_retrieve_data($object_id);
-			$this->object->delete();
-		}
 	}
 	
 }

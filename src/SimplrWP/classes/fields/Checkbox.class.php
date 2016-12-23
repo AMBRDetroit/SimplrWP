@@ -26,21 +26,34 @@ class Checkbox extends Field {
 	public function wp_admin_render_field() {
 		echo '<div class="field">';
 			echo '<label class="simplrwp--label">' . $this->get_label() . '</label>';
-			if(is_string($this->get_value()))
-				$choices = unserialize($this->get_value());
-			else
-				$choices = array();
 			
-			echo '<ul>';
-				foreach($this->settings['selectable_options'] as $key => $value){
-					$isSelected = in_array($key,$choices) ? 'checked' : '';
-					echo '<li class="option">';
-						echo '<input id="checkbox-' . $key . '-' . $this->get_name() . '" type="checkbox" name="'.$this->get_name().'[]" value="'.$key.'"  '.$isSelected.'>';
-						echo '<label for="checkbox-' . $key . '-' . $this->get_name() . '">' . $value . '</label>';
-					echo '</li>';
-				}
-			echo '</ul>';
+			
+			if($this->settings['read_only']){
+				echo '<p>' . $this->render_value() . '</p>';
+			}else{
+				echo '<ul>';
+					foreach($this->settings['selectable_options'] as $key => $value){
+						$isSelected = in_array($key,$this->get_value()) ? 'checked' : '';
+						echo '<li class="option">';
+							echo '<input id="checkbox-' . $key . '-' . $this->get_name() . '" type="checkbox" name="'.$this->get_name().'[]" value="'.$key.'"  '.$isSelected.'>';
+							echo '<label for="checkbox-' . $key . '-' . $this->get_name() . '">' . $value . '</label>';
+						echo '</li>';
+					}
+				echo '</ul>';
+			}
 		echo '</div>';
+	}
+	
+	public function render_value() {
+		return implode(', ', $this->get_value());
+	}
+				
+	public function get_value() {
+		$choices = array(__('Nothing selected'));
+		if(is_string($this->settings['value']) && !empty($this->settings['value']))
+			$choices = unserialize($this->settings['value']);
+			
+		return $choices;
 	}
 }
 ?>

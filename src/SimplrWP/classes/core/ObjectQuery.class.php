@@ -154,9 +154,6 @@ class ObjectQuery {
 			if($field->get_wp_admin_list()['sortable'])
 				$data_attributes[$name] = array($name, false);
 		}
-		
-		$data_attributes['created_at'] = array('created_at', false);
-		$data_attributes['updated_at'] = array('updated_at', false);
 		return $data_attributes;
 	}
 	
