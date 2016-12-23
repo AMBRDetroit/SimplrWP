@@ -240,10 +240,26 @@ class Object {
 	 *
 	 * @since 2016-07-13
 	 */
-	public function get_data_labels() {
+	public function get_data_labels($fields = null) {
 		$data_attributes = array();
-		foreach($this->fields as $name => $field) {
-			$data_attributes[$name] = $field->get_label();
+		
+		if(!empty($fields)) {
+			foreach($fields as $name) {
+				if($name == 'created_at') {
+					$data_attributes['created_at'] = 'Created At';
+				} else if($name == 'updated_at') {
+					$data_attributes['updated_at'] = 'Updated At';
+				} else {
+					$data_attributes[$name] = $this->fields[$name]->get_label();
+				}
+			}
+		} else {
+			foreach($this->fields as $name => $field) {
+				$data_attributes[$name] = $field->get_label();
+			}
+			
+			$data_attributes['created_at'] = 'Created At';
+			$data_attributes['updated_at'] = 'Updated At';
 		}
 		return $data_attributes;
 	}
@@ -312,34 +328,6 @@ class Object {
 		if($wpdb->delete( $this->db_table_name, array( 'id' => $this->id ) ) ) {
 			$this->data = array();
 			return true;
-		}
-		return false;
-	}
-	
-	/**
-	 * This returns the fields raw value
-	 *
-	 * @return mixed
-	 *
-	 * @since 2016-12-08
-	 */
-	public function get_field($field = '') {
-		if($field) {
-			return $this->fields[$field]->get_value();
-		}
-		return false;
-	}
-	
-	/**
-	 * This returns the fields rendered value
-	 *
-	 * @return mixed
-	 *
-	 * @since 2016-12-08
-	 */
-	public function render_field($field = '') {
-		if($field) {
-			return $this->fields[$field]->render_value();
 		}
 		return false;
 	}
