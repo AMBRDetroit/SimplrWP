@@ -1,4 +1,8 @@
 <?php
+// if already loaded, exit
+if(defined('SIMPLRWP_PATH'))
+	return;
+
 // initialize for global polling
 global $available_simplrwp_objects;
 $available_simplrwp_objects = array();
