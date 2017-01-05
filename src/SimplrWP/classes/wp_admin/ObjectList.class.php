@@ -18,7 +18,7 @@ class ObjectList extends \WP_List_Table {
 	}
 	
 	public function get_columns() {
-		return array_merge(array('cb' => '<input type="checkbox" />'), $this->object->get_data_labels( $this->options['fields'] ) );
+		return array_merge(array('cb' => '<input type="checkbox" />'), $this->object->get_data_labels( isset($this->options['fields']) ? $this->options['fields'] : null  ) );
 	}
 	
 	public function prepare_items($query_object = null) {
