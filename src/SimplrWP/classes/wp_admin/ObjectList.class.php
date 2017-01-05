@@ -26,7 +26,7 @@ class ObjectList extends \WP_List_Table {
 		
 		$action = $this->current_action();
 		if($action == 'delete') {
-			$this->delete_objects($_POST['woocommerce_saved_report']);
+			$this->delete_objects($_POST[$this->object->get_unique_name()]);
 		}
 	
 		if(empty($this->options['primary_field'])) {
