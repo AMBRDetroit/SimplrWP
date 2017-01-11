@@ -324,6 +324,12 @@ class Object {
 	 * @since 2016-12-08
 	 */
 	public function get_field($field = '') {
+		if($field == 'created_at')
+			return $this->created_at;
+		
+		if($field == 'updated_at')
+			return $this->updated_at;
+		
 		if($field) {
 			return $this->fields[$field]->get_value();
 		}
