@@ -219,6 +219,8 @@ class Object {
 	 * @since 2016-10-03
 	 */
 	public function get_updated_at($format = 'F j, Y') {
+		if(!$this->updated_at)
+			return $this->get_created_at($format);
 		return date($format, strtotime($this->updated_at));
 	}
 	
@@ -325,10 +327,10 @@ class Object {
 	 */
 	public function get_field($field = '') {
 		if($field == 'created_at')
-			return $this->created_at;
+			return $this->get_created_at();
 		
 		if($field == 'updated_at')
-			return $this->updated_at;
+			return $this->get_updated_at();
 		
 		if($field) {
 			return $this->fields[$field]->get_value();
