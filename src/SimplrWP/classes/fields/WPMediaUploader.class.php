@@ -70,8 +70,8 @@ class WPMediaUploader extends Field {
 		) );
 	}
 
-	public function get_img_url(){
-		return wp_get_attachment_image_src( $this->settings['value'], 'medium' )[0];
+	public function get_img_url($size = 'medium'){
+		return wp_get_attachment_image_src( $this->settings['value'], $size )[0];
 	}
 	
 	protected function _get_file_size($bytes, $precision = 0) { 
