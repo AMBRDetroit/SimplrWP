@@ -85,6 +85,8 @@ class ObjectList extends \WP_List_Table {
 		if($column_name == $this->options['primary_field']) {
 			$this->object->set_id_and_retrieve_data($item['id']);
 			$item_url = '?page='.$this->object->get_unique_name().'&id=' . $item['id'];
+			if(isset($_GET['post_type']))
+				$item_url .= '&post_type=' . $_GET['post_type'];
 			return '<a href="' . apply_filters('simplrwp_admin_list_primary_url-' . $this->object->get_unique_name(), $item_url, $this->object) . '">' . $item[$column_name] . '</a>';
 		}
 
