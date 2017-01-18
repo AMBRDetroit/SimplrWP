@@ -364,7 +364,7 @@ class Object {
 	private function _prepare_data_for_db($data) {
 		return array_map(function(&$value) {
 			// if array, return as array
-			if(is_array($value)) { return serialize($value); }
+			if(is_array($value)) { return base64_encode(serialize($value)); }
 			
 			if(is_string($value)) { return html_entity_decode($value); }
 			
