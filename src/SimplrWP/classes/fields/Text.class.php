@@ -23,6 +23,13 @@ class Text extends Field {
 			}
 		echo '</div>';
 	}
+	
+	public function get_value() {
+		if(is_string($this->settings['value'])) {
+			return stripslashes(htmlentities($this->settings['value']));
+		}
+		return $this->settings['value'];
+	}
 }
 
 ?>

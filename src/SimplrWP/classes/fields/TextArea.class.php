@@ -19,5 +19,12 @@ class TextArea extends Field {
 			echo '<textarea class="textarea" name="' . $this->get_name() . '">'. stripslashes($this->get_value()) .'</textarea>';
 		echo '</div>';
 	}
+	
+	public function get_value() {
+		if(is_string($this->settings['value'])) {
+			return stripslashes(htmlentities($this->settings['value']));
+		}
+		return $this->settings['value'];
+	}
 }
 ?>

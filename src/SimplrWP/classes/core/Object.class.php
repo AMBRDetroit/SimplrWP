@@ -365,6 +365,9 @@ class Object {
 		return array_map(function(&$value) {
 			// if array, return as array
 			if(is_array($value)) { return serialize($value); }
+			
+			if(is_string($value)) { return html_entity_decode($value); }
+			
 			// return untouched value
 			return $value;
 		}, $data);
