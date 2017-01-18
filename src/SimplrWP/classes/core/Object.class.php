@@ -276,7 +276,6 @@ class Object {
 	 */
 	public function update($data = array()) {
 		global $wpdb;
-	
 		// first, let's validate the data before updating the object
 		$result = $this->_validate_data($data);
 		if($result['valid'] && sizeof($result['data'])>1) {
@@ -362,6 +361,7 @@ class Object {
 	 * @since 2016-07-13
 	 */
 	private function _prepare_data_for_db($data) {
+		
 		return array_map(function(&$value) {
 			// if array, return as array
 			if(is_array($value)) { return base64_encode(serialize($value)); }

@@ -51,8 +51,9 @@ class Checkbox extends Field {
 	public function get_value() {
 		$choices = array(__('Nothing selected'));
 		if(is_string($this->settings['value']) && !empty($this->settings['value']))
-			$choices = unserialize($this->settings['value']);
-			
+			$choices = unserialize(base64_decode($this->settings['value']));
+		if(is_array($this->settings['value']) && !empty($this->settings['value']))
+			$choices = $this->settings['value'];
 		return $choices;
 	}
 }
