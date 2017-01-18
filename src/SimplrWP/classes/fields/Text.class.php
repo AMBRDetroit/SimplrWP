@@ -30,6 +30,10 @@ class Text extends Field {
 		}
 		return $this->settings['value'];
 	}
+	
+	public function set_value($value) {
+		$this->settings['value'] = html_entity_decode($value);
+	}
 }
 
 ?>
