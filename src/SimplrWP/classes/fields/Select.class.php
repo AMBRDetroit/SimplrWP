@@ -36,5 +36,9 @@ class Select extends Field {
 			echo '</select>';
 		echo '</div>';
 	}
+	
+	public function get_selectable_options() {
+		return $this->settings['selectable_options'];
+	}
 }
 ?>
