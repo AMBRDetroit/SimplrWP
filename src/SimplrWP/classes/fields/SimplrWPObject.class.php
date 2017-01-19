@@ -30,6 +30,10 @@ class SimplrWPObject extends Field {
 		parent::__construct($settings);
 	}
 	
+	public function get_simplrwp_object_types() {
+		return $this->settings['simplrwp_object_types'];
+	}
+	
 	public function wp_admin_render_field() {
 		
 		// Change Field into a select
@@ -67,7 +71,7 @@ class SimplrWPObject extends Field {
 		}
 
 		// render
-		echo '<div class="field">';
+		echo '<div class="field simplrwp--simplrwpobject">';
 			echo '<label class="simplrwp--label">' . $this->get_label() . '</label>';
 			echo '<div class="simplrwp-input">';
 				acf_render_field( $field );
@@ -78,20 +82,25 @@ class SimplrWPObject extends Field {
 	
 	public function get_choices( $options = array() ) {
 		global $available_simplrwp_objects;
-		
+	
 		// defaults
    		$options = acf_parse_args($options, array(
-			'object_id'		=> 0,
-			's'				=> '',
-			'field_key'		=> '',
-			'paged'			=> 1
+			'object_id'			=> 0,
+			's'					=> '',
+			'field_key'			=> '',
+			'paged'				=> 1,
+   			'simplrwp_object' 	=> false
 		));
 		
 		// vars
-   		$r = array();
+   		$r = [];
    		$args = array();
    		
-		
+   		if($options['simplrwp_object']) {
+   			$some_object = new $options['simplrwp_object']();
+   			$this->settings['simplrwp_object_types'] = $some_object->fields[$options['field_key']]->get_simplrwp_object_types();
+   		}
+   		
 		// paged
    		$args['limit'] = 20;
    		$args['offset'] = ($options['paged']-1) * $args['limit'];
@@ -143,16 +152,13 @@ class SimplrWPObject extends Field {
 					);
 					
 				}
+				$r[] = $data;
 			}
-			
-			$r[] = $data;
 		}
 		
 		// optgroup or single
-		if( count($simplrwp_object_types) == 1 ) {
-			
+		if( count($simplrwp_object_types) == 1) {
 			$r = $r[0]['children'];
-			
 		}
 		
 		// return
@@ -165,22 +171,22 @@ class SimplrWPObject extends Field {
 		// get choices
 		$choices = $this->get_choices( $_POST );
 	
-	
 		// validate
 		if( !$choices ) {
-				
+			echo json_encode( [
+				'items' => [],
+				'total_count' => 0
+			] );
 			die();
 				
 		}
 	
-	
 		// return JSON
-		echo json_encode( array(
+		echo json_encode( [
 			'items' => $choices,
 			'total_count' => sizeof($choices)
-		) );
+		]);
 		die();
-			
 	}
 	
 	public function get_objects() {
