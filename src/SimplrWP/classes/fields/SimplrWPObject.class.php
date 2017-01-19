@@ -41,7 +41,7 @@ class SimplrWPObject extends Field {
 		$field['type'] = 'select';
 		$field['ui'] = 1;
 		$field['ajax'] = 1;
-		$field['multiple'] = 1;
+		$field['multiple'] = $this->settings['allow_multiple'];
 		$field['choices'] = array();
 		$field['value'] = unserialize($this->settings['value']);
 		
