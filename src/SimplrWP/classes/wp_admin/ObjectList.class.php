@@ -9,16 +9,21 @@ class ObjectList extends \WP_List_Table {
 	
 	protected $object;
 	
-	protected $options;
+	protected $options = [
+		'allow_bulk_actions' => true
+	];
 	
 	public function __construct($options = array()) {
-		$this->options = $options;
+		$this->options = $options + $this->options;
 		
 		parent::__construct();
 	}
 	
 	public function get_columns() {
-		return array_merge(array('cb' => '<input type="checkbox" />'), $this->object->get_data_labels( isset($this->options['fields']) ? $this->options['fields'] : null  ) );
+		if($this->options['allow_bulk_actions']) {
+			return array_merge(array('cb' => '<input type="checkbox" />'), $this->object->get_data_labels( isset($this->options['fields']) ? $this->options['fields'] : null  ) );
+		}
+		return $this->object->get_data_labels( isset($this->options['fields']) ? $this->options['fields'] : null );
 	}
 	
 	public function prepare_items($query_object = null) {
@@ -98,9 +103,12 @@ class ObjectList extends \WP_List_Table {
     }
     
     public function get_bulk_actions() {
-	  	return array(
-	    	'delete' => 'Delete'
-	  	);
+    	if($this->options['allow_bulk_actions']) {
+		  	return array(
+		    	'delete' => 'Delete'
+		  	);
+    	}
+    	return false;
 	}
 	
 	public function get_object() {
