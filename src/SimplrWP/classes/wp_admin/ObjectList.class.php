@@ -42,6 +42,10 @@ class ObjectList extends \WP_List_Table {
 		
 		//query options
 		$query_options = array();
+		
+		if(isset($this->options['order_by_default'])) {
+			$query_options['order_by'] = $this->options['order_by_default'];
+		}
 		if(isset($_GET['orderby'])) {
 			$query_options['order_by'] = $_GET['orderby'];
 		}
@@ -63,7 +67,7 @@ class ObjectList extends \WP_List_Table {
 				);
 			}
 		}
-			
+		
 		$query_options['limit'] = $this->options['items_per_page'];
 		$this->items = $query_object->query($query_options);
 		
