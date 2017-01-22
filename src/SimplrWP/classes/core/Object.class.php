@@ -242,10 +242,19 @@ class Object {
 	 *
 	 * @since 2016-07-13
 	 */
-	public function get_data_labels() {
-		$data_attributes = array();
+	public function get_data_labels($only_fields = false) {
+		$data_attributes = [
+			'created_at' => 'Created At',
+			'updated_at' => 'Updated At'
+		];
 		foreach($this->fields as $name => $field) {
 			$data_attributes[$name] = $field->get_label();
+		}
+		if(is_array($only_fields)) {
+			foreach($data_attributes as $name => $field) {
+				if(!in_array($name, $only_fields))
+					unset($data_attributes[$name]);
+			}
 		}
 		return $data_attributes;
 	}
@@ -346,6 +355,9 @@ class Object {
 	 * @since 2016-12-08
 	 */
 	public function render_field($field = '') {
+		if($field == 'created_at' || $field == 'updated_at')
+			return $this->render_field($field);
+		
 		if($field) {
 			return $this->fields[$field]->render_value();
 		}
