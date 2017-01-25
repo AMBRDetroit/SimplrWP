@@ -243,17 +243,20 @@ class Object {
 	 * @since 2016-07-13
 	 */
 	public function get_data_labels($only_fields = false) {
-		$data_attributes = [
-			'created_at' => 'Created At',
-			'updated_at' => 'Updated At'
-		];
-		foreach($this->fields as $name => $field) {
-			$data_attributes[$name] = $field->get_label();
-		}
+		$data_attributes = [];
 		if(is_array($only_fields)) {
-			foreach($data_attributes as $name => $field) {
-				if(!in_array($name, $only_fields))
-					unset($data_attributes[$name]);
+			foreach($only_fields as $name) {
+				if($name == 'created_at') {
+					$data_attributes[$name] = 'Created At';
+				} elseif($name == 'updated_at') {
+					$data_attributes[$name] = 'Updated At';
+				} else {
+					$data_attributes[$name] = $this->fields[$name]->get_label();
+				}
+			}
+		} else {
+			foreach($this->fields as $name => $field) {
+				$data_attributes[$name] = $field->get_label();
 			}
 		}
 		return $data_attributes;
