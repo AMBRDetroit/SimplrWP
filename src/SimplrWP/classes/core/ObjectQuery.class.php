@@ -89,13 +89,16 @@ class ObjectQuery {
 		global $wpdb;
 		
 		reset($this->object->fields);
-		$options = array_merge(array(
+		$options += array(
 			'order_by' => key($this->object->fields),
 			'order' => 'asc',
 			'limit' => 5,
 			'offset' => 0,
-			'where_args' => array()	
-		), $options);
+			'data' => array(),
+			'distinct' => false,
+			'where_args' => array(),
+			'group_by' => array()
+		);
 		
 		$where_clause = '';
 		if(!empty($options['where_args'])) {
@@ -107,8 +110,40 @@ class ObjectQuery {
 			$limit = $wpdb->prepare(" LIMIT %d, %d" , array($options['offset'], $options['limit']));
 		}
 		
-		$query = "SELECT * FROM " . $this->object->get_db_table_name() . $where_clause . " ORDER BY " . $options['order_by'] . " " . $options['order'] . $limit; 
+		// determine if you should group items
+		$group_by = '';
+		if(!empty($options['group_by'])) {
+			$group_by = 'GROUP BY ' . implode(', ', $options['group_by']);
+		}
 		
+		// determine which data to select
+		$data = '*';
+		if(!empty($options['data'])) {
+			$select = [];
+			foreach ( $options['data'] as $key => $value ) {
+				$distinct = '';
+			
+				if ( $options['distinct'] ) {
+					$distinct = 'DISTINCT';
+				}
+					
+				if ( isset($value['function']) && !empty($value['function']) ) {
+					$get = "{$value['function']}({$distinct} {$key})";
+				} else {
+					$get = "{$distinct} {$key}";
+				}
+				
+				if($key == $value['name']) {
+					$select[] = "{$get}";
+				} else {
+					$select[] = "{$get} as {$value['name']}";
+				}
+			}
+			$data = implode(', ', $select);
+		}
+		
+		$query = "SELECT " . $data . " FROM " . $this->object->get_db_table_name() . $where_clause . " " . $group_by . " ORDER BY " . $options['order_by'] . " " . $options['order'] . $limit; 
+	
 		// this sets the total number of objects on the query (no limit)
 		$this->total_num_of_last_query_objects = $wpdb->get_var("SELECT COUNT(*) FROM " . $this->object->get_db_table_name() . $where_clause);
 		
