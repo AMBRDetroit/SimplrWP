@@ -9,21 +9,16 @@ class ObjectList extends \WP_List_Table {
 	
 	protected $object;
 	
-	protected $options = [
-		'allow_bulk_actions' => true
-	];
+	protected $options;
 	
 	public function __construct($options = array()) {
-		$this->options = $options + $this->options;
+		$this->options = $options;
 		
 		parent::__construct();
 	}
 	
 	public function get_columns() {
-		if($this->options['allow_bulk_actions']) {
-			return array_merge(array('cb' => '<input type="checkbox" />'), $this->object->get_data_labels( isset($this->options['fields']) ? $this->options['fields'] : null  ) );
-		}
-		return $this->object->get_data_labels( isset($this->options['fields']) ? $this->options['fields'] : null );
+		return array_merge(array('cb' => '<input type="checkbox" />'), $this->object->get_data_labels( isset($this->options['fields']) ? $this->options['fields'] : null  ) );
 	}
 	
 	public function prepare_items($query_object = null) {
@@ -41,11 +36,7 @@ class ObjectList extends \WP_List_Table {
 		$this->_column_headers = array($this->get_columns(), $query_object->get_admin_hidden_fields(), $query_object->get_admin_list_sortables());
 		
 		//query options
-		$query_options = array();
-		
-		if(isset($this->options['order_by_default'])) {
-			$query_options['order_by'] = $this->options['order_by_default'];
-		}
+		$query_options = $this->options;
 		if(isset($_GET['orderby'])) {
 			$query_options['order_by'] = $_GET['orderby'];
 		}
@@ -67,7 +58,7 @@ class ObjectList extends \WP_List_Table {
 				);
 			}
 		}
-		
+			
 		$query_options['limit'] = $this->options['items_per_page'];
 		$this->items = $query_object->query($query_options);
 		
@@ -107,12 +98,9 @@ class ObjectList extends \WP_List_Table {
     }
     
     public function get_bulk_actions() {
-    	if($this->options['allow_bulk_actions']) {
-		  	return array(
-		    	'delete' => 'Delete'
-		  	);
-    	}
-    	return false;
+	  	return array(
+	    	'delete' => 'Delete'
+	  	);
 	}
 	
 	public function get_object() {
