@@ -380,8 +380,8 @@ class Object {
 		return array_map(function(&$value) {
 			// if array, return as array
 			if(is_array($value)) { return serialize($value); }
-			// return UTF-8 encoded value
-			return mb_convert_encoding($value, 'UTF-8', 'UTF-8');
+			// return raw value
+			return $value;
 		}, $data);
 	}
 	
