@@ -27,8 +27,9 @@ class WPEditor extends Field {
 	}
 	
 	public function wp_admin_render_field() {
+		$required = $this->is_required() ? '<span style="color:red"> *</span>' : '';
 		echo '<div class="field">';
-			echo '<label class="simplrwp--label">' . $this->get_label() . '</label>';
+			echo '<label class="simplrwp--label">' . $this->get_label() . $required . '</label>';
 			$this->settings['content'] = stripslashes($this->get_value());
 			$this->settings['editor_id'] = $this->get_name();
 			wp_editor(   $this->settings['content'], $this->settings['editor_id'] , $this->settings['wpeditor_settings'] );

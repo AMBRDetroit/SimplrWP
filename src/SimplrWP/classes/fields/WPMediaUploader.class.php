@@ -16,9 +16,10 @@ class WPMediaUploader extends Field {
 	public function wp_admin_render_field() {
 		$is_image = in_array(get_post_mime_type($this->get_value()), array('image/png', 'image/jpg', 'image/jpeg', 'image/gif'));
 		$has_file = !empty($this->get_value());
+		$required = $this->is_required() ? '<span style="color:red"> *</span>' : '';
 		?>
 		<div class="field simplrwp--media_uploader">
-			<label class="simplrwp--label"><?php  echo $this->get_label(); ?></label>
+			<label class="simplrwp--label"><?php  echo $this->get_label() . $required; ?></label>
 			<?php if($this->settings['read_only']){ 
 				echo $this->render_field();
 			} else { ?>

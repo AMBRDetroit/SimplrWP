@@ -24,8 +24,9 @@ class Checkbox extends Field {
 	}
 
 	public function wp_admin_render_field() {
+		$required = $this->is_required() ? '<span style="color:red"> *</span>' : '';
 		echo '<div class="field">';
-			echo '<label class="simplrwp--label">' . $this->get_label() . '</label>';
+			echo '<label class="simplrwp--label">' . $this->get_label() . $required . '</label>';
 			
 			
 			if($this->settings['read_only']){

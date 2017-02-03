@@ -69,10 +69,12 @@ class SimplrWPObject extends Field {
 				}
 			}
 		}
-
+	
+		$required = $this->is_required() ? '<span style="color:red"> *</span>' : '';
+		
 		// render
 		echo '<div class="field simplrwp--simplrwpobject">';
-			echo '<label class="simplrwp--label">' . $this->get_label() . '</label>';
+			echo '<label class="simplrwp--label">' . $this->get_label() . $required . '</label>';
 			echo '<div class="simplrwp-input">';
 				acf_render_field( $field );
 			echo '</div>';
