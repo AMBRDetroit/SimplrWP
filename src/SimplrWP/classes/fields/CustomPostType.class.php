@@ -48,7 +48,7 @@ class CustomPostType extends Field {
 			$field['value'] = is_string($field['value']) ? array($field['value']) : $field['value'];
 			foreach( $field['value'] as $i ) {
 				
-				$saved_object_parts = explode('|||', $i);
+				$saved_object_parts = explode('=::=', $i);
 				if(sizeof($saved_object_parts)==2) {
 					$object_class = $saved_object_parts[0];
 					$object_id = $saved_object_parts[1];
@@ -141,7 +141,7 @@ class CustomPostType extends Field {
 					}
 					
 					$data['children'][] = array(
-						'id'	=> $object_class . '|||' . $current_object->get_id(),
+						'id'	=> $object_class . '=::=' . $current_object->get_id(),
 						'text'	=> implode(' ', $text_array)
 					);
 					
@@ -192,7 +192,7 @@ class CustomPostType extends Field {
 		$simplrwp_objects = array();
 		if(!empty($value)){
 			foreach($value as $i) {
-				$value_parts = explode('|||', $i);
+				$value_parts = explode('=::=', $i);
 				$simplrwp_objects[$value_parts[0]][] = intval($value_parts[1]);
 			}			
 		}
