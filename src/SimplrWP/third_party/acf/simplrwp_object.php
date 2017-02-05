@@ -159,7 +159,11 @@ class acf_field_simplrwp_object extends acf_field {
 					//generate text label from fields
 					$text_array = array();
 					foreach($field[$object_class . '-object_fields'] as $current_field) {
-						$text_array[] = $current_object->fields[$current_field]->get_value();
+						$text_array[] = $current_object->get_field($current_field);
+					}
+					
+					if($format = $field[$object_class . '-object_field_display']) {
+						$text_array = [ vsprintf($format, $text_array) ];
 					}
 					
 					$data['children'][] = array(
@@ -333,6 +337,17 @@ class acf_field_simplrwp_object extends acf_field {
 				'ui'			=> 1,
 				'allow_null'	=> 0,
 				'placeholder'	=> __("Select a query field.",'acf'),
+			));
+			
+			acf_render_field_setting( $field, array(
+				'label'			=> __($simplrwp_object . ' Fields Display Mask','acf'),
+				'instructions'	=> '',
+				'type'			=> 'text',
+				'name'			=> $object_class . '-object_field_display',
+				'multiple'		=> 1,
+				'ui'			=> 1,
+				'allow_null'	=> 0,
+				'placeholder'	=> __("Use %s for each field to choose how to display an object. (i.e. - %s %s).",'acf'),
 			));
 		}
 		
