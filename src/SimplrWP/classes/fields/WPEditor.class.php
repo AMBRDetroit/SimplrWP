@@ -35,6 +35,17 @@ class WPEditor extends Field {
 			wp_editor(   $this->settings['content'], $this->settings['editor_id'] , $this->settings['wpeditor_settings'] );
 		echo '</div>';
 	}
+	
+	public function get_value() {
+		if(is_string($this->settings['value'])) {
+			return stripslashes($this->settings['value']);
+		}
+		return $this->settings['value'];
+	}
+	
+	public function render_value() {
+		return $this->get_value();
+	}
 }
 
 ?>
