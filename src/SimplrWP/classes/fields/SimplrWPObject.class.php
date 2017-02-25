@@ -43,12 +43,14 @@ class SimplrWPObject extends Field {
 		$field['ajax'] = 1;
 		$field['multiple'] = $this->settings['allow_multiple'];
 		$field['choices'] = array();
-		$field['value'] = is_string($this->settings['value']) ? [$this->settings['value']] : unserialize($this->settings['value']);
+		
+		if (($field['value'] = @unserialize($this->settings['value'])) === false) {
+			$field['value'] = [ $this->settings['value'] ];
+		}
 		
 		// populate choices if value exists
 		if( !empty($field['value']) ) {
-			// always make sure the value is an array
-			$field['value'] = is_string($field['value']) ? array($field['value']) : $field['value'];
+			
 			foreach( $field['value'] as $i ) {
 				
 				$saved_object_parts = explode('=::=', $i);
