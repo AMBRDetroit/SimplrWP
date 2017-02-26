@@ -397,6 +397,22 @@ class Object {
 	private function _validate_data($potential_data = array()) {
 		$data_to_verify = array();
 		
+		// add created at
+		if(isset($potential_data['created_at'])) {
+			$data_to_verify['created_at'] = array(
+				'value' => $potential_data['created_at'],
+				'validations' => []
+			);
+		}
+		
+		// add updated at
+		if(isset($potential_data['updated_at'])) {
+			$data_to_verify['updated_at'] = array(
+				'value' => $potential_data['updated_at'],
+				'validations' => []
+			);
+		}
+		
 		// remove unavailable fields and get validations
 		foreach($this->fields as $field_name => $field) {
 			if(isset($potential_data[$field_name]))
@@ -453,9 +469,9 @@ class Object {
 	
 		// generate the sql to create the table
 		$fields = array_merge(array(
-				'id bigint(20) NOT NULL AUTO_INCREMENT,',
-				'created_at datetime DEFAULT CURRENT_TIMESTAMP,',
-				'updated_at datetime ON UPDATE CURRENT_TIMESTAMP,'
+			'id bigint(20) NOT NULL AUTO_INCREMENT,',
+			'created_at datetime DEFAULT CURRENT_TIMESTAMP,',
+			'updated_at datetime ON UPDATE CURRENT_TIMESTAMP,'
 		), $this->_flatten_custom_table_fields(), array('UNIQUE KEY id (id)') );
 			
 		$sql = 'CREATE TABLE ' . $this->db_table_name . ' (' . implode("\n", $fields) . ') ' . $charset_collate . ';';
