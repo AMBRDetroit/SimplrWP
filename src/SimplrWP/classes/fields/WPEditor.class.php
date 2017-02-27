@@ -46,6 +46,11 @@ class WPEditor extends Field {
 	public function render_value() {
 		return $this->get_value();
 	}
+	
+	public function wp_admin_enqueue_scripts() {
+		// load styles
+		wp_enqueue_style( 'simplrwp_wp-media-uploader', SIMPLRWP_URL . 'assets/css/simplrwp-wpeditor.css' );
+	}
 }
 
 ?>
