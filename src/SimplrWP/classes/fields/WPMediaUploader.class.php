@@ -13,6 +13,20 @@ namespace SimplrWP\Fields;
  */
 class WPMediaUploader extends Field {
 	
+	// setup field
+	public function __construct($options =  array()) {
+		$options += [
+			'restrict_mime_types' => false		
+		];
+		
+		if(!empty($options['restrict_mime_types'])) {
+			//add_filter( 'upload_mimes', array($this, 'restrict_mime_types') );
+		
+			//add_action( 'post-upload-ui', array($this, 'restrict_mime_types_hint') );
+		}
+		parent::__construct($options);
+	}
+	
 	public function wp_admin_render_field() {
 		$is_image = in_array(get_post_mime_type($this->get_value()), array('image/png', 'image/jpg', 'image/jpeg', 'image/gif'));
 		$has_file = !empty($this->get_value());
@@ -46,7 +60,7 @@ class WPMediaUploader extends Field {
 				<p class="hide-if-no-js">
 					<div class="upload-media <?php echo $has_file ? 'hidden' : ''; ?>">
 						No file selected.
-					    <a class="button" href="<?php echo esc_url( get_upload_iframe_src( 'image' ) ) ?>" >
+					    <a class="button" href="<?php echo esc_url( get_upload_iframe_src( 'pdf' ) ) ?>" >
 					        <?php _e('Add Media') ?>
 					    </a>
 					</div>
@@ -66,9 +80,16 @@ class WPMediaUploader extends Field {
 		wp_enqueue_style( 'simplrwp_wp-media-uploader', SIMPLRWP_URL . 'assets/css/simplrwp-media_uploader.css' );
 		
 		wp_enqueue_script( 'simplrwp_wp-media-uploader', SIMPLRWP_URL . 'assets/js/fields/WPMediaUploader.js' );
-		wp_localize_script( 'simplrwp_wp-media-uploader', 'simplrwp_media_uploader', array(
+		
+		$js_options = array(
 			'simplrwp_url' => SIMPLRWP_URL,
-		) );
+			'restrict_mime_types' => []
+		);
+		
+		if(!empty($this->settings['restrict_mime_types'])) {
+			$js_options['restrict_mime_types'][$this->get_name()] = is_array($this->settings['restrict_mime_types']) ? array_values($this->settings['restrict_mime_types']) : [];
+		}
+		wp_localize_script( 'simplrwp_wp-media-uploader', 'simplrwp_media_uploader',  $js_options);
 	}
 
 	public function get_img_url($size = 'medium'){
@@ -87,6 +108,15 @@ class WPMediaUploader extends Field {
 	
 	    return round($bytes, $precision) . ' ' . $units[$pow]; 
 	} 
+	
+	public function restrict_mime_types( $mime_types ) {
+		return $this->settings['restrict_mime_types'];
+	} 
+	
+	public function restrict_mime_types_hint() {
+		echo '<br />';
+		_e( 'Accepted MIME types: ' . implode(', ', array_values($this->settings['restrict_mime_types'])) );
+	}
 }
 
 ?>
