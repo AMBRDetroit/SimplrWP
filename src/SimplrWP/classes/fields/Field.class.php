@@ -41,6 +41,10 @@ abstract class Field {
 		add_action( 'admin_enqueue_scripts', array(&$this, 'wp_admin_enqueue_scripts') );
 	}
 	
+	public function is_required() {
+		return in_array('not_empty', $this->settings['before_save_validations']);
+	}
+	
 	public function set_value($value) {
 		$this->settings['value'] = $value;
 	}

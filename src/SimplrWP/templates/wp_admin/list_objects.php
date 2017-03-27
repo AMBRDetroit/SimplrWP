@@ -8,7 +8,13 @@
 <?php if(!empty($object_admin_list->get_options()['query_fields'] )) { ?>
 <form method="get">
     <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
+    <?php foreach($_GET as $key => $value) {
+    	if(!in_array($key, ['s', 'page']))
+    		echo '<input type="hidden" name="' . $key . '" value="' . $value . '" />';
+	} ?>
   	<?php $object_admin_list->search_box('Search ' . $object_admin_list->get_object()->get_labels()['plural'], 'simplrwp_q'); ?>
 </form>
 <?php } ?>
-<?php echo $object_admin_list->display(); ?>
+<form method="post">
+	<?php echo $object_admin_list->display(); ?>
+</form>

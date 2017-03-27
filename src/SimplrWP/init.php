@@ -1,4 +1,8 @@
 <?php
+// if already loaded, exit
+if(defined('SIMPLRWP_PATH'))
+	return;
+
 // initialize for global polling
 global $available_simplrwp_objects;
 $available_simplrwp_objects = array();
@@ -16,6 +20,7 @@ require_once 'classes/core/Validator.class.php';
 // load fields
 require_once 'classes/fields/Field.class.php';
 
+require_once 'classes/fields/Raw.class.php';
 require_once 'classes/fields/Text.class.php';
 require_once 'classes/fields/TextArea.class.php';
 require_once 'classes/fields/Select.class.php';

@@ -9,20 +9,30 @@ class ObjectList extends \WP_List_Table {
 	
 	protected $object;
 	
-	protected $options;
+	protected $options = [
+ 		'allow_bulk_actions' => true
+ 	];
 	
 	public function __construct($options = array()) {
-		$this->options = $options;
+		$this->options = $options + $this->options;
 		
 		parent::__construct();
 	}
 	
 	public function get_columns() {
-		return array_merge(array('cb' => '<input type="checkbox" />'), $this->object->get_data_labels() );
+		if($this->options['allow_bulk_actions']) {
+ 			return array_merge(array('cb' => '<input type="checkbox" />'), $this->object->get_data_labels( isset($this->options['fields']) ? $this->options['fields'] : null  ) );
+ 		}
+ 		return $this->object->get_data_labels( isset($this->options['fields']) ? $this->options['fields'] : null );
 	}
 	
 	public function prepare_items($query_object = null) {
 		$this->object = $query_object->object;
+		
+		$action = $this->current_action();
+		if($action == 'delete') {
+			$this->delete_objects($_POST[$this->object->get_unique_name()]);
+		}
 	
 		if(empty($this->options['primary_field'])) {
 			reset($this->object->fields);
@@ -31,7 +41,7 @@ class ObjectList extends \WP_List_Table {
 		$this->_column_headers = array($this->get_columns(), $query_object->get_admin_hidden_fields(), $query_object->get_admin_list_sortables());
 		
 		//query options
-		$query_options = array();
+		$query_options = $this->options;
 		if(isset($_GET['orderby'])) {
 			$query_options['order_by'] = $_GET['orderby'];
 		}
@@ -78,7 +88,11 @@ class ObjectList extends \WP_List_Table {
 	
 	public function column_default( $item, $column_name ) {
 		if($column_name == $this->options['primary_field']) {
-			return '<a href="?page='.$this->object->get_unique_name().'&id=' . $item['id'] . '">' . $item[$column_name] . '</a>';
+			$this->object->set_id_and_retrieve_data($item['id']);
+			$item_url = '?page='.$this->object->get_unique_name().'&id=' . $item['id'];
+			if(isset($_GET['post_type']))
+				$item_url .= '&post_type=' . $_GET['post_type'];
+			return '<a href="' . apply_filters('simplrwp_admin_list_primary_url-' . $this->object->get_unique_name(), $item_url, $this->object) . '">' . $item[$column_name] . '</a>';
 		}
 
 		return $item[ $column_name ];
@@ -89,9 +103,12 @@ class ObjectList extends \WP_List_Table {
     }
     
     public function get_bulk_actions() {
-	  	return array(
-	    	'delete' => 'Delete'
-	  	);
+	  	if($this->options['allow_bulk_actions']) {
+ 		  	return array(
+ 		    	'delete' => 'Delete'
+ 		  	);
+     	}
+     	return false;
 	}
 	
 	public function get_object() {
@@ -100,6 +117,13 @@ class ObjectList extends \WP_List_Table {
 	
 	public function get_options() {
 		return $this->options;
+	}
+	
+	public function delete_objects($object_ids) {
+		foreach($object_ids as $object_id) {
+			$this->object->set_id_and_retrieve_data($object_id);
+			$this->object->delete();
+		}
 	}
 	
 }

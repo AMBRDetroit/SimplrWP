@@ -30,6 +30,10 @@ class SimplrWPObject extends Field {
 		parent::__construct($settings);
 	}
 	
+	public function get_simplrwp_object_types() {
+		return $this->settings['simplrwp_object_types'];
+	}
+	
 	public function wp_admin_render_field() {
 		
 		// Change Field into a select
@@ -37,17 +41,19 @@ class SimplrWPObject extends Field {
 		$field['type'] = 'select';
 		$field['ui'] = 1;
 		$field['ajax'] = 1;
-		$field['multiple'] = 1;
+		$field['multiple'] = $this->settings['allow_multiple'];
 		$field['choices'] = array();
-		$field['value'] = unserialize($this->settings['value']);
+		
+		if (($field['value'] = @unserialize($this->settings['value'])) === false) {
+			$field['value'] = [ $this->settings['value'] ];
+		}
 		
 		// populate choices if value exists
 		if( !empty($field['value']) ) {
-			// always make sure the value is an array
-			$field['value'] = is_string($field['value']) ? array($field['value']) : $field['value'];
+			
 			foreach( $field['value'] as $i ) {
 				
-				$saved_object_parts = explode('|||', $i);
+				$saved_object_parts = explode('=::=', $i);
 				if(sizeof($saved_object_parts)==2) {
 					$object_class = $saved_object_parts[0];
 					$object_id = $saved_object_parts[1];
@@ -65,10 +71,12 @@ class SimplrWPObject extends Field {
 				}
 			}
 		}
-
+	
+		$required = $this->is_required() ? '<span style="color:red"> *</span>' : '';
+		
 		// render
-		echo '<div class="field">';
-			echo '<label class="simplrwp--label">' . $this->get_label() . '</label>';
+		echo '<div class="field simplrwp--simplrwpobject">';
+			echo '<label class="simplrwp--label">' . $this->get_label() . $required . '</label>';
 			echo '<div class="simplrwp-input">';
 				acf_render_field( $field );
 			echo '</div>';
@@ -78,20 +86,25 @@ class SimplrWPObject extends Field {
 	
 	public function get_choices( $options = array() ) {
 		global $available_simplrwp_objects;
-		
+	
 		// defaults
    		$options = acf_parse_args($options, array(
-			'object_id'		=> 0,
-			's'				=> '',
-			'field_key'		=> '',
-			'paged'			=> 1
+			'object_id'			=> 0,
+			's'					=> '',
+			'field_key'			=> '',
+			'paged'				=> 1,
+   			'simplrwp_object' 	=> false
 		));
 		
 		// vars
-   		$r = array();
+   		$r = [];
    		$args = array();
    		
-		
+   		if($options['simplrwp_object']) {
+   			$some_object = new $options['simplrwp_object']();
+   			$this->settings['simplrwp_object_types'] = $some_object->fields[$options['field_key']]->get_simplrwp_object_types();
+   		}
+   		
 		// paged
    		$args['limit'] = 20;
    		$args['offset'] = ($options['paged']-1) * $args['limit'];
@@ -138,21 +151,18 @@ class SimplrWPObject extends Field {
 					}
 					
 					$data['children'][] = array(
-						'id'	=> $object_class . '|||' . $current_object->get_id(),
+						'id'	=> $object_class . '=::=' . $current_object->get_id(),
 						'text'	=> implode(' ', $text_array)
 					);
 					
 				}
+				$r[] = $data;
 			}
-			
-			$r[] = $data;
 		}
 		
 		// optgroup or single
-		if( count($simplrwp_object_types) == 1 ) {
-			
+		if( count($simplrwp_object_types) == 1) {
 			$r = $r[0]['children'];
-			
 		}
 		
 		// return
@@ -165,22 +175,22 @@ class SimplrWPObject extends Field {
 		// get choices
 		$choices = $this->get_choices( $_POST );
 	
-	
 		// validate
 		if( !$choices ) {
-				
+			echo json_encode( [
+				'items' => [],
+				'total_count' => 0
+			] );
 			die();
 				
 		}
 	
-	
 		// return JSON
-		echo json_encode( array(
+		echo json_encode( [
 			'items' => $choices,
 			'total_count' => sizeof($choices)
-		) );
+		]);
 		die();
-			
 	}
 	
 	public function get_objects() {
@@ -189,7 +199,7 @@ class SimplrWPObject extends Field {
 		$simplrwp_objects = array();
 		if(!empty($value)){
 			foreach($value as $i) {
-				$value_parts = explode('|||', $i);
+				$value_parts = explode('=::=', $i);
 				$simplrwp_objects[$value_parts[0]][] = intval($value_parts[1]);
 			}			
 		}

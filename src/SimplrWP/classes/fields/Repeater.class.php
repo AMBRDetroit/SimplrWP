@@ -26,9 +26,10 @@ class Repeater extends Field {
 	}
 
 	public function wp_admin_render_field() {
+		$required = $this->is_required() ? '<span style="color:red"> *</span>' : '';
 	?>
 		<div class="field simplrwp--repeater" id="<?php echo $this->get_name(); ?>" >
-			<label class="simplrwp--label"><?php echo $this->get_label(); ?></label>
+			<label class="simplrwp--label"><?php echo $this->get_label() . $required; ?></label>
 			<div class="simplrwp--all_instances">
 				<?php // let's load the existing values
 					if( !($values = @unserialize($this->get_value()) ) ) {

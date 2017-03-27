@@ -219,6 +219,8 @@ class Object {
 	 * @since 2016-10-03
 	 */
 	public function get_updated_at($format = 'F j, Y') {
+		if(!$this->updated_at)
+			return $this->get_created_at($format);
 		return date($format, strtotime($this->updated_at));
 	}
 	
@@ -240,10 +242,22 @@ class Object {
 	 *
 	 * @since 2016-07-13
 	 */
-	public function get_data_labels() {
-		$data_attributes = array();
-		foreach($this->fields as $name => $field) {
-			$data_attributes[$name] = $field->get_label();
+	public function get_data_labels($only_fields = false) {
+		$data_attributes = [];
+		if(is_array($only_fields)) {
+			foreach($only_fields as $name) {
+				if($name == 'created_at') {
+					$data_attributes[$name] = 'Created At';
+				} elseif($name == 'updated_at') {
+					$data_attributes[$name] = 'Updated At';
+				} else {
+					$data_attributes[$name] = $this->fields[$name]->get_label();
+				}
+			}
+		} else {
+			foreach($this->fields as $name => $field) {
+				$data_attributes[$name] = $field->get_label();
+			}
 		}
 		return $data_attributes;
 	}
@@ -317,6 +331,43 @@ class Object {
 	}
 	
 	/**
+	 * This returns the fields raw value
+	 *
+	 * @return mixed
+	 *
+	 * @since 2016-12-08
+	 */
+	public function get_field($field = '') {
+		if($field == 'created_at')
+			return $this->get_created_at();
+		
+		if($field == 'updated_at')
+			return $this->get_updated_at();
+		
+		if($field) {
+			return $this->fields[$field]->get_value();
+		}
+		return false;
+	}
+	
+	/**
+	 * This returns the fields rendered value
+	 *
+	 * @return mixed
+	 *
+	 * @since 2016-12-08
+	 */
+	public function render_field($field = '') {
+		if($field == 'created_at' || $field == 'updated_at')
+			return $this->render_field($field);
+		
+		if($field) {
+			return $this->fields[$field]->render_value();
+		}
+		return false;
+	}
+	
+	/**
 	 * This validates the potential data to be saved into the database.
 	 *
 	 * @param array $potential_data The potential data to be saved.
@@ -329,7 +380,7 @@ class Object {
 		return array_map(function(&$value) {
 			// if array, return as array
 			if(is_array($value)) { return serialize($value); }
-			// return untouched value
+			// return raw value
 			return $value;
 		}, $data);
 	}
@@ -345,6 +396,22 @@ class Object {
 	 */
 	private function _validate_data($potential_data = array()) {
 		$data_to_verify = array();
+		
+		// add created at
+		if(isset($potential_data['created_at'])) {
+			$data_to_verify['created_at'] = array(
+				'value' => $potential_data['created_at'],
+				'validations' => []
+			);
+		}
+		
+		// add updated at
+		if(isset($potential_data['updated_at'])) {
+			$data_to_verify['updated_at'] = array(
+				'value' => $potential_data['updated_at'],
+				'validations' => []
+			);
+		}
 		
 		// remove unavailable fields and get validations
 		foreach($this->fields as $field_name => $field) {
@@ -402,9 +469,9 @@ class Object {
 	
 		// generate the sql to create the table
 		$fields = array_merge(array(
-				'id bigint(20) NOT NULL AUTO_INCREMENT,',
-				'created_at datetime DEFAULT CURRENT_TIMESTAMP,',
-				'updated_at datetime ON UPDATE CURRENT_TIMESTAMP,'
+			'id bigint(20) NOT NULL AUTO_INCREMENT,',
+			'created_at datetime DEFAULT CURRENT_TIMESTAMP,',
+			'updated_at datetime ON UPDATE CURRENT_TIMESTAMP,'
 		), $this->_flatten_custom_table_fields(), array('UNIQUE KEY id (id)') );
 			
 		$sql = 'CREATE TABLE ' . $this->db_table_name . ' (' . implode("\n", $fields) . ') ' . $charset_collate . ';';
