@@ -237,7 +237,7 @@ class FrontEnd {
 			if($this->settings['list_page_settings']['objects_per_page']) {
 				$this->pagination_params = array(
 					'total_pages' => ceil($object_query->total_number_of_last_query_objects()/$this->settings['list_page_settings']['objects_per_page']),
-					'current_page' => $url_parameters['page'],
+					'current_page' => isset($url_parameters['page']) ? $url_parameters['page'] : 1,
 					'total_number_of_objects' => $object_query->total_number_of_last_query_objects()
 				);
 			}
