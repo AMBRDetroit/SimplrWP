@@ -1,0 +1,10 @@
+/*************
+*	Select2 Styling (SimplrWP)
+*************/
+.simplrwp-input select, .select2-container { width:100%; }
+.select2-selection__rendered li { margin-bottom:0; }
+.select2-results { background:#fafafa; }
+.select2-results .select2-highlighted { background:#f1f1f1; }
+.select2-selection__choice { margin: 5px 0 5px 5px; padding: 3px 5px 3px 18px; border-color: #bbb !important; background: #f9f9f9 !important; border-radius:0 !important; box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25) inset; }
+.select2-container--default .select2-selection--multiple { border-radius:0px !important; border:1px solid #ddd !important; }
+.select2-container--default .select2-selection--multiple .select2-selection__choice { padding:3px 6px !important; }

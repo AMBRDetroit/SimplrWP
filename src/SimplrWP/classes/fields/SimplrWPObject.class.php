@@ -212,6 +212,7 @@ class SimplrWPObject extends Field {
 		wp_enqueue_script('simplrwp-select2', SIMPLRWP_URL . 'assets/js/third_party/select2.min.js' ,array('jquery'),AMBR_VERSION,true);
 		wp_enqueue_style('simplrwp-select2', SIMPLRWP_URL . 'assets/css/third_party/select2.min.css', '' );
 		
+		wp_enqueue_style('simplrwp-simplrwp-object', SIMPLRWP_URL . 'assets/css/simplrwp-simplrwp_object.css');
 		wp_enqueue_script('simplrwp_wp-simplrwp-object', SIMPLRWP_URL . 'assets/js/fields/SimplrWPObject.js');
 	}
 }
