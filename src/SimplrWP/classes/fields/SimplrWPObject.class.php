@@ -194,7 +194,7 @@ class SimplrWPObject extends Field {
 	}
 	
 	public function get_objects() {
-		$value = is_string($this->settings['value']) ? unserialize($this->settings['value']) : $this->settings['value'];
+		$value = is_serialized($this->settings['value']) ? unserialize($this->settings['value']) : [$this->settings['value']];
 		
 		$simplrwp_objects = array();
 		if(!empty($value)){
