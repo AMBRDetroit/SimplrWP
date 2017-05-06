@@ -43,6 +43,7 @@ if(is_admin()) {
 
 // load front end objects
 require_once 'classes/front_end/FrontEnd.class.php';
+require_once 'classes/front_end/General.class.php';
 
 
 /****************************************
