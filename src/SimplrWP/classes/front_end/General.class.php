@@ -46,7 +46,7 @@ class General {
 	}
 	
 	public function load_template($template) {
-		global $wp_query;
+		global $wp_query, $simplrwp_template;
 		
 		foreach($this->url_routes as $base_route => $url_route){
 			// is the base route in the URL?
@@ -54,6 +54,11 @@ class General {
 				// is the remaining route in the URL?
 				if(isset($this->url_routes[$base_route][$wp_query->query_vars[$base_route]])) {
 					$settings = $this->url_routes[$base_route][$wp_query->query_vars[$base_route]];
+					
+					$simplrwp_template = $settings['template_file'];
+					
+					// set page template for conditionals based on template
+					add_filter('page_template', function($template) { global $simplrwp_template; return $simplrwp_template; });
 					
 					return $settings['template_file'];
 				}
