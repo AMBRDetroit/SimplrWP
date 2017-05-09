@@ -140,8 +140,8 @@ class FrontEnd {
 					$query_args = array( 'relation' => 'AND' );
 					foreach($query_parameters as $key => $value) {
 						$query_args[] = array(
-								'key' => $key,
-								'value' => $value
+							'key' => $key,
+							'value' => $value
 						);
 					}
 

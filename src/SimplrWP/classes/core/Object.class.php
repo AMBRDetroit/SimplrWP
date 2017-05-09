@@ -292,6 +292,7 @@ class Object {
 		// first, let's validate the data before updating the object
 		$result = $this->_validate_data($data);
 		if($result['valid'] && sizeof($result['data'])>0) {
+
 			// data looks good, let's update it in the database
 			$updated = false;
 			$db_data = $this->_prepare_data_for_db($result['data']);
