@@ -278,6 +278,9 @@ class ObjectQuery {
 			$meta_value = $clause['value'];
 			
 			if( $meta_compare == 'FIND IN SET' ) {
+				if( !empty($clause['delimiter'])) {
+					$meta_key = sprintf("REPLACE('%s',',', %s)", $clause['delimiter'], $meta_key);
+				}
 				return $wpdb->prepare( 'FIND_IN_SET(%s, %s)', $meta_value, $meta_key );
 			}
 	
