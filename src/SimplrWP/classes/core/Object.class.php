@@ -395,7 +395,7 @@ class Object {
 	 *
 	 * @since 2016-07-13
 	 */
-	private function _validate_data($potential_data = array()) {
+	public function _validate_data($potential_data = array()) {
 		$data_to_verify = array();
 		
 		// add created at

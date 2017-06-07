@@ -264,7 +264,8 @@ class ObjectQuery {
 				'BETWEEN', 'NOT BETWEEN',
 				'EXISTS', 'NOT EXISTS',
 				'REGEXP', 'NOT REGEXP', 'RLIKE',
-				'BEGINS WITH', 'ENDS WITH'
+				'BEGINS WITH', 'ENDS WITH',
+				'FIND IN SET'
 		) ) ) {
 			$clause['compare'] = '=';
 		}
@@ -275,6 +276,10 @@ class ObjectQuery {
 		if ( array_key_exists( 'key', $clause ) && array_key_exists( 'value', $clause ) ) {
 			$meta_key = $clause['key'];
 			$meta_value = $clause['value'];
+			
+			if( $meta_compare == 'FIND IN SET' ) {
+				return $wpdb->prepare( 'FIND_IN_SET(%s, %s)', $meta_value, $meta_key );
+			}
 	
 			if ( in_array( $meta_compare, array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) ) ) {
 				if ( ! is_array( $meta_value ) ) {
