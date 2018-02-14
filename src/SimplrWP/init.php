@@ -2,7 +2,7 @@
 /*
  Name: SimplrW
  Description: This is a PHP framework built on WordPress for more advanced "CPT-type" objects and interfaces.
- Version:     2.0.0
+ Version:     2.0.1
  */
 
 // if already loaded, exit

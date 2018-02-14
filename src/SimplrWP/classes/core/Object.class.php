@@ -50,7 +50,7 @@ namespace SimplrWP\Core;
  * $current_author = new SampleAuthor(1); //pass in the ID of the object
  * ```
  */
-class Object {
+class SObject {
 	/*
 	 * The id of the object
 	 *

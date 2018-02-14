@@ -7,7 +7,7 @@ namespace SimplrWP\Core;
  * To do this we first need to create a new ObjectQuery instance, passing in the SimplrWP Object that we want to query against.
  * 
  * ```php
- * $object_query = new ObjectQuery(new Object);
+ * $object_query = new ObjectQuery(new SObject);
  * ```
  * 
  * ## Example Query
