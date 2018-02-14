@@ -1,4 +1,4 @@
-## SimplrWP
+## SimplrWP - Latest Release v2.0.1
 A developer's framework for WordPress.
 
 # Overview
@@ -149,7 +149,7 @@ Now that you have the object, we can create interfaces to the object.
  
  To access a field from the object:
  ```php
- $author_first_name = $current_author->get_field('first_name);
+ $author_first_name = $current_author->get_field('first_name');
  ```
  
  This is just a short introduction to SimplrWP.  
