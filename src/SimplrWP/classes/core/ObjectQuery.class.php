@@ -128,7 +128,8 @@ class ObjectQuery {
 				}
 					
 				if ( isset($value['function']) && !empty($value['function']) ) {
-					$get = "{$value['function']}({$distinct} {$key})";
+					$function_suffix = !empty($value['function_suffix']) ? ' ' . $value['function_suffix'] : '';
+					$get = "{$value['function']}({$distinct} {$key}{$function_suffix})";
 				} else {
 					$get = "{$distinct} {$key}";
 				}
