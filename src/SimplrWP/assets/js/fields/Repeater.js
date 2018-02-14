@@ -8,6 +8,9 @@ jQuery(function($){
 		var field_name = $(this).data('name');
 		var parent = $('#' + field_name + ' .simplrwp--all_instances');
 		
+		// delete empty element, if exists
+		$('.empty_repeater', parent).remove();
+		
 		var html = simplr.template.build({
 			component : 'field-' + field_name,
 			tokens : {
@@ -21,7 +24,16 @@ jQuery(function($){
 	}).on('click','.js-remove-field', function(evt) {
 		evt.preventDefault();
 		
+		var repeater_name = $(this).closest('.simplrwp--repeater').attr('id');
+		
 		$(this).closest('.simplrwp--repeater_field').remove();
+		
+		var repeater_item_count  = $('.simplrwp--all_instances .simplrwp--repeater_field', '#' + repeater_name).length;
+		
+		if(repeater_item_count == 0) {
+			$('.simplrwp--all_instances', '#' + repeater_name).html('<input class="empty_repeater" type="hidden" name="' + repeater_name + '" />');
+		}
+		
 		
 	})
 });

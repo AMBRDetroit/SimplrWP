@@ -7,7 +7,7 @@ namespace SimplrWP\Core;
  * To do this we first need to create a new ObjectQuery instance, passing in the SimplrWP Object that we want to query against.
  * 
  * ```php
- * $object_query = new ObjectQuery(new Object);
+ * $object_query = new ObjectQuery(new SObject);
  * ```
  * 
  * ## Example Query
@@ -89,13 +89,16 @@ class ObjectQuery {
 		global $wpdb;
 		
 		reset($this->object->fields);
-		$options = array_merge(array(
+		$options += array(
 			'order_by' => key($this->object->fields),
 			'order' => 'asc',
 			'limit' => 5,
 			'offset' => 0,
-			'where_args' => array()	
-		), $options);
+			'data' => array(),
+			'distinct' => false,
+			'where_args' => array(),
+			'group_by' => array()
+		);
 		
 		$where_clause = '';
 		if(!empty($options['where_args'])) {
@@ -107,8 +110,41 @@ class ObjectQuery {
 			$limit = $wpdb->prepare(" LIMIT %d, %d" , array($options['offset'], $options['limit']));
 		}
 		
-		$query = "SELECT * FROM " . $this->object->get_db_table_name() . $where_clause . " ORDER BY " . $options['order_by'] . " " . $options['order'] . $limit; 
+		// determine if you should group items
+		$group_by = '';
+		if(!empty($options['group_by'])) {
+			$group_by = 'GROUP BY ' . implode(', ', $options['group_by']);
+		}
 		
+		// determine which data to select
+		$data = '*';
+		if(!empty($options['data'])) {
+			$select = [];
+			foreach ( $options['data'] as $key => $value ) {
+				$distinct = '';
+			
+				if ( $options['distinct'] ) {
+					$distinct = 'DISTINCT';
+				}
+					
+				if ( isset($value['function']) && !empty($value['function']) ) {
+					$function_suffix = !empty($value['function_suffix']) ? ' ' . $value['function_suffix'] : '';
+					$get = "{$value['function']}({$distinct} {$key}{$function_suffix})";
+				} else {
+					$get = "{$distinct} {$key}";
+				}
+				
+				if($key == $value['name']) {
+					$select[] = "{$get}";
+				} else {
+					$select[] = "{$get} as {$value['name']}";
+				}
+			}
+			$data = implode(', ', $select);
+		}
+		
+		$query = "SELECT " . $data . " FROM " . $this->object->get_db_table_name() . $where_clause . " " . $group_by . " ORDER BY " . $options['order_by'] . " " . $options['order'] . $limit; 
+	
 		// this sets the total number of objects on the query (no limit)
 		$this->total_num_of_last_query_objects = $wpdb->get_var("SELECT COUNT(*) FROM " . $this->object->get_db_table_name() . $where_clause);
 		
@@ -229,7 +265,8 @@ class ObjectQuery {
 				'BETWEEN', 'NOT BETWEEN',
 				'EXISTS', 'NOT EXISTS',
 				'REGEXP', 'NOT REGEXP', 'RLIKE',
-				'BEGINS WITH', 'ENDS WITH'
+				'BEGINS WITH', 'ENDS WITH',
+				'FIND IN SET'
 		) ) ) {
 			$clause['compare'] = '=';
 		}
@@ -240,6 +277,10 @@ class ObjectQuery {
 		if ( array_key_exists( 'key', $clause ) && array_key_exists( 'value', $clause ) ) {
 			$meta_key = $clause['key'];
 			$meta_value = $clause['value'];
+			
+			if( $meta_compare == 'FIND IN SET' ) {
+				return $wpdb->prepare( 'FIND_IN_SET(%s, ' . $meta_key . ')', $meta_value );
+			}
 	
 			if ( in_array( $meta_compare, array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ) ) ) {
 				if ( ! is_array( $meta_value ) ) {

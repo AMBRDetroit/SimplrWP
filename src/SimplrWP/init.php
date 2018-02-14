@@ -1,4 +1,10 @@
 <?php
+/*
+ Name: SimplrW
+ Description: This is a PHP framework built on WordPress for more advanced "CPT-type" objects and interfaces.
+ Version:     2.0.1
+ */
+
 // if already loaded, exit
 if(defined('SIMPLRWP_PATH'))
 	return;
@@ -20,6 +26,7 @@ require_once 'classes/core/Validator.class.php';
 // load fields
 require_once 'classes/fields/Field.class.php';
 
+require_once 'classes/fields/Raw.class.php';
 require_once 'classes/fields/Text.class.php';
 require_once 'classes/fields/TextArea.class.php';
 require_once 'classes/fields/Select.class.php';
@@ -42,6 +49,7 @@ if(is_admin()) {
 
 // load front end objects
 require_once 'classes/front_end/FrontEnd.class.php';
+require_once 'classes/front_end/General.class.php';
 
 
 /****************************************

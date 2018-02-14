@@ -41,10 +41,10 @@ class acf_field_simplrwp_object extends acf_field {
 			'taxonomy'		=> array(),
 			'allow_null' 	=> 0,
 			'multiple'		=> 1,
+			'duplicates'	=> 1,
 			'return_format'	=> 'object',
 			'ui'			=> 1,
 		);
-		$this->
 		
 		
 		// extra
@@ -79,7 +79,8 @@ class acf_field_simplrwp_object extends acf_field {
 			'object_id'		=> 0,
 			's'				=> '',
 			'field_key'		=> '',
-			'paged'			=> 1
+			'paged'			=> 1,
+   			'current_value' => ''
 		));
 		
 		// vars
@@ -108,20 +109,41 @@ class acf_field_simplrwp_object extends acf_field {
 			}
 		}
 		
+		// get values to omit based on current value
+		$omit_values = [];
+		foreach(explode('||', $options['current_value']) as $value) {
+			$value_parts = explode('=::=', $value);
+			$omit_values[$value_parts[0]][] = intval($value_parts[1]); 
+		}
+		
 		// get objects
 		foreach($simplrwp_object_types as $object_class) {
 			$query_params = $args;
+			if($field['duplicates']!=1) {
+				$query_params['where_args'] = array(
+					'relation' => 'AND',
+					array(
+						'compare' => 'NOT IN',
+						'key' => 'id',
+						'value' => $omit_values[$object_class]
+					)
+				);
+			}
+			
 			if( $options['s'] ) {
-				$query_params['where_args'] = array('relation' => 'OR');
+				$search_query = array(
+					'relation' => 'OR',
+				);
 				foreach($field[$object_class . '-object_fields'] as $current_field) {
-					$query_params['where_args'][] = array(
+					$search_query[] = array(
 						'compare' => 'LIKE',
 						'key' => $current_field,
 						'value' => $options['s']	
 					);
 				}
+				
+				$query_params['where_args'][] = $search_query;
 			}
-			
 			
 			$object_query = new \SimplrWP\Core\ObjectQuery(new $object_class());
 			$found_objects = $object_query->query($query_params);
@@ -137,11 +159,15 @@ class acf_field_simplrwp_object extends acf_field {
 					//generate text label from fields
 					$text_array = array();
 					foreach($field[$object_class . '-object_fields'] as $current_field) {
-						$text_array[] = $current_object->fields[$current_field]->get_value();
+						$text_array[] = $current_object->get_field($current_field);
+					}
+					
+					if($format = $field[$object_class . '-object_field_display']) {
+						$text_array = [ vsprintf($format, $text_array) ];
 					}
 					
 					$data['children'][] = array(
-						'id'	=> $object_class . '|||' . $current_object->get_id(),
+						'id'	=> $object_class . '=::=' . $current_object->get_id(),
 						'text'	=> implode(' ', $text_array)
 					);
 					
@@ -231,7 +257,7 @@ class acf_field_simplrwp_object extends acf_field {
 			$field['value'] = is_string($field['value']) ? array($field['value']) : $field['value'];
 			foreach( $field['value'] as $i ) {
 				
-				$saved_object_parts = explode('|||', $i);
+				$saved_object_parts = explode('=::=', $i);
 				if(sizeof($saved_object_parts)==2) {
 					$object_class = $saved_object_parts[0];
 					$object_id = $saved_object_parts[1];
@@ -312,6 +338,17 @@ class acf_field_simplrwp_object extends acf_field {
 				'allow_null'	=> 0,
 				'placeholder'	=> __("Select a query field.",'acf'),
 			));
+			
+			acf_render_field_setting( $field, array(
+				'label'			=> __($simplrwp_object . ' Fields Display Mask','acf'),
+				'instructions'	=> '',
+				'type'			=> 'text',
+				'name'			=> $object_class . '-object_field_display',
+				'multiple'		=> 1,
+				'ui'			=> 1,
+				'allow_null'	=> 0,
+				'placeholder'	=> __("Use %s for each field to choose how to display an object. (i.e. - %s %s).",'acf'),
+			));
 		}
 		
 		// allow_null
@@ -334,6 +371,19 @@ class acf_field_simplrwp_object extends acf_field {
 			'instructions'	=> '',
 			'type'			=> 'radio',
 			'name'			=> 'multiple',
+			'choices'		=> array(
+				1				=> __("Yes",'acf'),
+				0				=> __("No",'acf'),
+			),
+			'layout'	=>	'horizontal',
+		));
+		
+		// multiple
+		acf_render_field_setting( $field, array(
+			'label'			=> __('Allow duplicates values?','acf'),
+			'instructions'	=> '',
+			'type'			=> 'radio',
+			'name'			=> 'duplicates',
 			'choices'		=> array(
 				1				=> __("Yes",'acf'),
 				0				=> __("No",'acf'),
@@ -419,7 +469,7 @@ class acf_field_simplrwp_object extends acf_field {
 		
 		$simplrwp_objects = array();
 		foreach($value as $i) {
-			$value_parts = explode('|||', $i);
+			$value_parts = explode('=::=', $i);
 			$simplrwp_objects[$value_parts[0]][] = intval($value_parts[1]);
 		}
 		

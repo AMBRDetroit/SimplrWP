@@ -14,7 +14,9 @@ class Admin {
 			'primary_field' => null,
 			'sortable_field' => false,
 			'items_per_page' => 10,
-			'query_fields' => array()
+			'query_fields' => array(),
+			'order_by' => 'id',
+			'order' => 'ASC'
 		)
 	);
 	
@@ -166,6 +168,8 @@ class Admin {
 	
 	public function render_metabox_content( $object, $box ) {
 		wp_nonce_field(basename(__FILE__), $this->options['object']->get_unique_name() . '-nonce');
+		echo '<input type="hidden" class="current_simplrwp_object" value="' . $this->options['object']->get_unique_name() . '" />';
+		
 		// load a html template before editable fields
 		if(!empty($box['args']['before_fields_html_template'])) {
 			include $box['args']['before_fields_html_template'];

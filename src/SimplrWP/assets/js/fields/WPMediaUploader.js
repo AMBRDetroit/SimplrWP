@@ -12,20 +12,30 @@ jQuery(function($){
 	  	 	file_container = metaBox.find( '.file-container'),
 	  	 	media_input_id = metaBox.find( '.media-id' );
 	    
-	    // If the media frame already exists, reopen it.
+	    // If the media frame already exists, reset it
 	    if ( frame ) {
-	      frame.open();
-	      return;
+	      frame = null;
 	    }
-	  
-	    // Create a new media frame
-	    frame = wp.media({
+	    
+	    var frame_options = {
 	    	title: 'Select or Upload Media',
 	    	button: {
 	    		text: 'Use this media'
 	    	},
 	    	multiple: false
-	    });
+	    }
+	    
+	    frame_options.library = {};
+	    var this_field = media_input_id.attr('name');
+	    var fields_with_mime_restrictions = Object.keys(simplrwp_media_uploader.restrict_mime_types);
+	    if(fields_with_mime_restrictions.indexOf(this_field)>=0 && simplrwp_media_uploader.restrict_mime_types[this_field].length > 0 ) {
+	    	frame_options.library = {
+	            type : simplrwp_media_uploader.restrict_mime_types[this_field][0]
+	        };
+	    }
+	  
+	    // Create a new media frame
+	    frame = wp.media(frame_options);
 	    
 	    // When an image is selected in the media frame...
 	    frame.on( 'select', function() {

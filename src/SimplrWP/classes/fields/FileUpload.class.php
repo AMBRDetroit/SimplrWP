@@ -34,10 +34,12 @@ class FileUpload extends Field {
 	}
 	
 	public function wp_admin_render_field() {
-		wp_nonce_field(plugin_basename(__FILE__), 'simplrwp_file_upload_nonce');		
+		wp_nonce_field(plugin_basename(__FILE__), 'simplrwp_file_upload_nonce');
+
+		$required = $this->is_required() ? '<span style="color:red"> *</span>' : '';
 	?>
 		<div class="field">
-			<label class="simplrwp--label"><?php echo $this->get_label(); ?></label>
+			<label class="simplrwp--label"><?php echo $this->get_label() . $required; ?></label>
 			<input type="file" name="<?php echo $this->get_label(); ?>"  value=""/>
 			<button type="submit" name="<?php echo $this->get_name() . '_submit'; ?>">Upload</button> 
 

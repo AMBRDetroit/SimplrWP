@@ -25,7 +25,7 @@ A developer's framework for WordPress.
  
  Next let's create a SimplrWP object:
  ```php
-   class Sample_Author extends SimplrWP\Core\Object {
+   class Sample_Author extends SimplrWP\Core\SObject {
 		public function __construct($id = null) {
 	
 			$this->latest_db_version = 1;
@@ -149,7 +149,7 @@ Now that you have the object, we can create interfaces to the object.
  
  To access a field from the object:
  ```php
- $author_first_name = $current_author->fields['first_name']->get_value();
+ $author_first_name = $current_author->get_field('first_name);
  ```
  
  This is just a short introduction to SimplrWP.  

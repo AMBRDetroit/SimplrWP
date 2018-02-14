@@ -1,6 +1,8 @@
 jQuery(function($){
+	var parent = $('.simplrwp-input select').closest('.simplrwp--simplrwpobject');
+	
 	// Select2 AJAX call for users to query object in the wp-admin
-	$('.simplrwp-input select').select2({
+	$('.simplrwp-input select', parent).select2({
 		ajax: {
 		    url: ajaxurl,
 		    dataType: 'json',
@@ -8,10 +10,10 @@ jQuery(function($){
 			type: 'post',
 			cache: false,
 		    data: function (args) {
-		      console.log(args);
 		      return {
 				action: 	'simplrwp/fields/simplrwp_object/query',
-				field_key: 	args.key,
+				field_key: 	$(this).attr('id'),
+				simplrwp_object: $('.current_simplrwp_object').val(),
 				post_id: 	1,
 				s: 			args.term,
 				paged: 		args.page

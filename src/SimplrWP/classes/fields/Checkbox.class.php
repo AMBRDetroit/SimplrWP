@@ -24,8 +24,9 @@ class Checkbox extends Field {
 	}
 
 	public function wp_admin_render_field() {
+		$required = $this->is_required() ? '<span style="color:red"> *</span>' : '';
 		echo '<div class="field">';
-			echo '<label class="simplrwp--label">' . $this->get_label() . '</label>';
+			echo '<label class="simplrwp--label">' . $this->get_label() . $required . '</label>';
 			
 			
 			if($this->settings['read_only']){
@@ -47,12 +48,13 @@ class Checkbox extends Field {
 	public function render_value() {
 		return implode(', ', $this->get_value());
 	}
-				
+	
 	public function get_value() {
 		$choices = array(__('Nothing selected'));
 		if(is_string($this->settings['value']) && !empty($this->settings['value']))
 			$choices = unserialize($this->settings['value']);
-			
+		if(is_array($this->settings['value']) && !empty($this->settings['value']))
+			$choices = $this->settings['value'];
 		return $choices;
 	}
 }
