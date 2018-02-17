@@ -96,6 +96,14 @@ class SObject {
 	protected $latest_db_version = 1;
 	
 	/*
+	 * This is the collection of rules that can be used when
+	 * validating fields
+	 *
+	 *	@var array
+	 */
+	protected $field_validation_rules = [];
+	
+	/*
 	 * The field objects related to the object.  It should be
 	 * an array of SimplrWP\Fields\Text (or any child of).
 	 * 
@@ -324,11 +332,27 @@ class SObject {
 	public function delete() {
 		global $wpdb;
 		
+		if(!is_int($this->id))
+			return;
+		
 		if($wpdb->delete( $this->db_table_name, array( 'id' => $this->id ) ) ) {
 			$this->data = array();
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Set the fields raw value
+	 *
+	 * @return mixed
+	 *
+	 * @since 2018-02-03
+	 */
+	public function set_field($field = '', $value = '') {
+		if($field) {
+			return $this->fields[$field]->set_value($value);
+		}
 	}
 	
 	/**
@@ -369,6 +393,17 @@ class SObject {
 	}
 	
 	/**
+	 * This add validation rules to be used on fields
+	 *
+	 * @return null
+	 *
+	 * @since 2018-01-28
+	 */
+	public function add_validation_rule($data = []) {
+		$this->field_validation_rules[] = $data;	
+	}
+	
+	/**
 	 * This validates the potential data to be saved into the database.
 	 *
 	 * @param array $potential_data The potential data to be saved.
@@ -395,7 +430,7 @@ class SObject {
 	 *
 	 * @since 2016-07-13
 	 */
-	public function _validate_data($potential_data = array()) {
+	protected function _validate_data($potential_data = array()) {
 		$data_to_verify = array();
 		
 		// add created at
@@ -421,12 +456,21 @@ class SObject {
 			
 			$data_to_verify[$field_name] = array(
 				'value' => $field->get_value(),
+				'label' => $field->get_label(),
 				'validations' => $field->get_before_save_validations()
 			);
 		}
 		
 		// validate data
 		$validator = new Validator;
+		
+		//add rules that can be used for validation
+		foreach($this->field_validation_rules as $options) {
+			$validator->add_rule($options['name'], $options['function'], $options['name']);
+			$validator->add_error_label($options['name'], $options['error_label']);
+		}
+		
+		// validate and return response
 		return $validator->validate($data_to_verify);
 	}
 	
