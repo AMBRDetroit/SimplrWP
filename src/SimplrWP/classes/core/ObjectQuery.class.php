@@ -152,6 +152,35 @@ class ObjectQuery {
 	}
 	
 	/**
+	 * This returns a single object based on collection of key/value pairs
+	 *
+	 * @param array $key_values The key/value pairs of query
+	 *
+	 * @return object|bool
+	 *
+	 * @since 2018-02-25
+	 */
+	public function get_one($key_values = []) {
+		if(!empty($key_values)) {
+			$where_args = [];
+			foreach($key_values as $key => $value) {
+				$where_args[] = ['key' => $key, 'value' => $value];
+			}
+			
+			$results = $this->query([
+				'limit' => 1,
+				'where_args' => [ $where_args ]
+			]);
+			
+			if(!empty($results)) {
+				return $results[0];
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
 	 * This returns the total number of objects based on the object type.
 	 *
 	 * @return integer
