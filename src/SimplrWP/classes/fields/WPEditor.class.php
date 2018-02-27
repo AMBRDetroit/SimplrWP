@@ -36,9 +36,9 @@ class WPEditor extends Field {
 		echo '</div>';
 	}
 	
-	public function render_wp_editor_field() {
+	public function render_wp_editor_field($uniqid = false) {
 		$this->settings['content'] = stripslashes($this->get_value());
-		$this->settings['editor_id'] = $this->get_name();
+		$this->settings['editor_id'] = $this->get_name() . ($uniqid ? ('-' . $uniqid): '');
 		wp_editor(   $this->settings['content'], $this->settings['editor_id'] , $this->settings['wpeditor_settings'] );
 	}
 	
