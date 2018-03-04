@@ -500,11 +500,9 @@ class acf_field_simplrwp_object extends acf_field {
 	}
 	
 	function input_admin_enqueue_scripts() {
-		wp_enqueue_script( 'acf-simplrwp_object', SIMPLRWP_URL . 'assets/js/third_party/acf-simplrwp_object.js' ,array('acf-input'),AMBR_VERSION,true);
+		wp_enqueue_script( 'acf-simplrwp_object', SIMPLRWP_URL . 'assets/js/third_party/acf-simplrwp_object.js' ,array('acf-input'),false,true);
 	}
 	
 }
 
 endif;
-
-?>
