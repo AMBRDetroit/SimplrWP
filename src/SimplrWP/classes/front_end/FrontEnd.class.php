@@ -61,7 +61,7 @@ class FrontEnd {
 		// register new rewrite endpoints
 		add_action('init', array(&$this, 'add_rewrite_rules') );
 		// register template include based on rewrite rules
-		add_filter('template_include', array(&$this, 'load_template') );
+		add_filter('template_include', array(&$this, 'load_template'), 15 );
 		// should the list of objects template be available?
 		if($this->settings['list_page_settings']) {
 			// add sub page for list of objects
