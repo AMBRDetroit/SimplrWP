@@ -82,7 +82,7 @@ class Encrypted extends Field {
 				fclose($key_file_buffer);
 				
 				// only read and execute by the owner, no other access
-				//chmod($key_file_path, 0500);
+				chmod($key_file_path, 0500);
 			}
 			
 			require($key_file_path);
