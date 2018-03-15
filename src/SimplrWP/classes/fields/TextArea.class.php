@@ -32,4 +32,3 @@ class TextArea extends Field {
 		$this->settings['value'] = html_entity_decode($value);
 	}
 }
-?>

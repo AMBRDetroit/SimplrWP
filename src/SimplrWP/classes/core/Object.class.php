@@ -296,11 +296,11 @@ class SObject {
 	 */
 	public function update($data = array()) {
 		global $wpdb;
-	
+		
 		// first, let's validate the data before updating the object
 		$result = $this->_validate_data($data);
 		if($result['valid'] && sizeof($result['data'])>0) {
-
+			
 			// data looks good, let's update it in the database
 			$updated = false;
 			$db_data = $this->_prepare_data_for_db($result['data']);
@@ -413,12 +413,12 @@ class SObject {
 	 * @since 2016-07-13
 	 */
 	private function _prepare_data_for_db($data) {
-		return array_map(function(&$value) {
-			// if array, return as array
-			if(is_array($value)) { return serialize($value); }
-			// return raw value
-			return $value;
-		}, $data);
+		$db_data = [];
+		foreach($data as $field => $value) {
+			$value = is_array($value) ? serialize($value) : $value;
+			$db_data[$field] = $this->fields[$field]->prepare_db_value($value);
+		}
+		return $db_data;
 	}
 	
 	/**
@@ -491,7 +491,7 @@ class SObject {
 				
 				//set value of each field based on DB data
 				foreach($this->fields as $field_name => &$field) {
-					$field->set_value($values[$field_name]);
+					$field->unprepare_db_value($values[$field_name]);
 				}
 			}
 			

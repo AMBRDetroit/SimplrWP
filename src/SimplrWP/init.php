@@ -2,7 +2,7 @@
 /*
  Name: SimplrW
  Description: This is a PHP framework built on WordPress for more advanced "CPT-type" objects and interfaces.
- Version:     2.0.1
+ Version:     2.0.2
  */
 
 // if already loaded, exit
@@ -27,6 +27,7 @@ require_once 'classes/core/Validator.class.php';
 require_once 'classes/fields/Field.class.php';
 
 require_once 'classes/fields/Raw.class.php';
+require_once 'classes/fields/Encrypted.class.php';
 require_once 'classes/fields/Text.class.php';
 require_once 'classes/fields/TextArea.class.php';
 require_once 'classes/fields/Select.class.php';
