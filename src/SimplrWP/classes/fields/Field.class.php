@@ -57,6 +57,14 @@ abstract class Field {
 		return $this->settings['value'];
 	}
 	
+	public function prepare_db_value($value) {
+		return $value;
+	}
+	
+	public function unprepare_db_value($value) {
+		return $this->set_value($value);
+	}
+	
 	public function render_value() {
 		return $this->settings['render_value']($this->settings['value']);
 	}

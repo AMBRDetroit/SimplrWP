@@ -16,7 +16,7 @@ class General {
 		add_action('init', array($this, 'add_rewrite_rules') );
 		
 		// register template include based on rewrite rules
-		add_filter('template_include', array($this, 'load_template') );
+		add_filter('template_include', array($this, 'load_template'), 10 );
 	}
 
 	public function add_url_route($settings = array()) {

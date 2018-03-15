@@ -1,1 +1,1 @@
-NOTHING HERE
+<?php wp_redirect(home_url()); ?>

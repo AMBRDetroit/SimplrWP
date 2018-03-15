@@ -81,20 +81,22 @@ class Validator {
 	 * @since 2016-07-13
 	 */
 	public function validate($data = array()) {
-		$results = array( 'valid' => true, 'errors' => '', 'data' => array());
+		$results = array( 'valid' => true, 'errors' => []);
 		foreach($data as $key => $options) {
 			$results['data'][$key] = $options['value'];
 			foreach($options['validations'] as $validation) {
-				if(!$this->rules[$validation]['function']($options['value'])) {
+				if(isset($this->rules[$validation]) && !$this->rules[$validation]['function']($options['value'])) {
 					$results['valid'] = false;
-					if(is_wp_error($this->error_results)) {
-						$this->error_results->add($key, $this->error_labels[$this->rules[$validation]['error_label']]);
-					} else {
-						$this->error_results = new \WP_Error($key, $this->error_labels[$this->rules[$validation]['error_label']]);
-					}
-					unset($results['data'][$key]);
+					// lets create the error object for the key
+					if(!isset($results['errors'][$key]))
+						$results['errors'][$key] = [];
+						
+						$results['errors'][$key][] = [
+								'code' => $validation,
+								'message' => str_replace('[field_name]', $options['label'], $this->error_labels[$this->rules[$validation]['error_label']])
+						];
+						unset($results['data'][$key]);
 				}
-				$results['errors'] = $this->error_results;
 			}
 		}
 		return $results;
@@ -104,25 +106,25 @@ class Validator {
 	 * This function allows you to add new rules to test data against.
 	 *
 	 * @param  string $name The name of the rule.
-	 * 
+	 *
 	 * @param  function $function The function which validates the value.
-	 *  
+	 *
 	 * @param  string $error_label The error label associated to this validation rule
 	 *
 	 * @since 2016-08-10
 	 */
 	public function add_rule($name, $function = null, $error_label) {
 		$this->rules[$name] = array(
-			'function' => $function,
-			'error_label' => $error_label
-		);	
+				'function' => $function,
+				'error_label' => $error_label
+		);
 	}
 	
 	/**
 	 * This function allows you to add new error labels
-	 * 
+	 *
 	 * @param  string $error_label The error label associated to this validation rule
-	 * 
+	 *
 	 * @param  string $message The message to users.  You can display the field name into the message like this: [field_name].
 	 *
 	 * @since 2016-08-10
@@ -144,11 +146,11 @@ class Validator {
 		$rendered = new \WP_Error;
 		if(!isset($wp_error))
 			return $rendered;
-		
-		foreach($wp_error->errors as $field => $message) {
-			$rendered->add($field, str_replace('[field_name]', $object->fields[$field]->get_label(), $message));
-		}
-		return $rendered;
+			
+			foreach($wp_error->errors as $field => $message) {
+				$rendered->add($field, str_replace('[field_name]', $object->fields[$field]->get_label(), $message));
+			}
+			return $rendered;
 	}
 	
 	
@@ -162,14 +164,14 @@ class Validator {
 		$this->add_rule('is_email_address', function($value='') {
 			return is_email($value);
 		}, 'not_email_address');
-		// is value not empty
-		$this->add_rule('not_empty', function($value='') {
-			return !empty($value);
-		}, 'is_empty');
-		// is value a phone number
-		$this->add_rule('is_phone_number', function($value='') {
-			return $this->is_phone_number($value);
-		}, 'not_phone_number');
+			// is value not empty
+			$this->add_rule('not_empty', function($value='') {
+				return !empty($value);
+			}, 'is_empty');
+				// is value a phone number
+				$this->add_rule('is_phone_number', function($value='') {
+					return $this->is_phone_number($value);
+				}, 'not_phone_number');
 	}
 	
 	/**

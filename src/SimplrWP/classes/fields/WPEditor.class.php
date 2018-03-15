@@ -36,6 +36,12 @@ class WPEditor extends Field {
 		echo '</div>';
 	}
 	
+	public function render_wp_editor_field($uniqid = false) {
+		$this->settings['content'] = stripslashes($this->get_value());
+		$this->settings['editor_id'] = $this->get_name() . ($uniqid ? ('-' . $uniqid): '');
+		wp_editor(   $this->settings['content'], $this->settings['editor_id'] , $this->settings['wpeditor_settings'] );
+	}
+	
 	public function get_value() {
 		if(is_string($this->settings['value'])) {
 			return stripslashes($this->settings['value']);
@@ -52,5 +58,3 @@ class WPEditor extends Field {
 		wp_enqueue_style( 'simplrwp_wp-media-uploader', SIMPLRWP_URL . 'assets/css/simplrwp-wpeditor.css' );
 	}
 }
-
-?>

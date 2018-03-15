@@ -1,4 +1,4 @@
-## SimplrWP - Latest Release v2.0.1
+## SimplrWP - Latest Release v2.0.2
 A developer's framework for WordPress.
 
 # Overview
@@ -59,6 +59,8 @@ A developer's framework for WordPress.
  - Textarea
  - WPEditor
  - WPMediaUploader
+ - Raw
+ - Encrypted
  
 Now that you have the object, we can create interfaces to the object.
  
