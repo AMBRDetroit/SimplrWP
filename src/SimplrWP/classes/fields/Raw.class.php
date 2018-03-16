@@ -21,5 +21,3 @@ class Raw extends Field {
 	}
 	
 }
-
-?>
