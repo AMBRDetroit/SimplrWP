@@ -85,6 +85,7 @@ class Validator {
 		foreach($fields as $field_name => $options) {
 			foreach($options['validations'] as $validation_key => $validation) {
 				if($validation instanceof \SimplrWP\Fields\Field) {
+
 					if(isset($options['value'][$validation_key]))
 						$validation->set_value($options['value'][$validation_key]);
 						
@@ -138,8 +139,8 @@ class Validator {
 	 */
 	public function add_rule($name, $function = null, $error_label) {
 		$this->rules[$name] = array(
-				'function' => $function,
-				'error_label' => $error_label
+			'function' => $function,
+			'error_label' => $error_label
 		);
 	}
 	

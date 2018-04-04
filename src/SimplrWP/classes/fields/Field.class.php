@@ -62,7 +62,8 @@ abstract class Field {
 	}
 	
 	public function unprepare_db_value($value) {
-		return $this->set_value($value);
+		$result = @unserialize($value);
+		$this->set_value($result===false ? $value : $result);
 	}
 	
 	public function render_value() {
