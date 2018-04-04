@@ -80,19 +80,41 @@ class Validator {
 	 * 
 	 * @since 2016-07-13
 	 */
-	public function validate($data = array()) {
+	public function validate($fields = array()) {
 		$results = array( 'valid' => true, 'errors' => []);
-		foreach($data as $key => $options) {
-			$results['data'][$key] = $options['value'];
-			foreach($options['validations'] as $validation) {
-				if(isset($this->rules[$validation]) && !$this->rules[$validation]['function']($options['value'])) {
-					$results['valid'] = false;
-					// lets create the error object for the key
-					if(!isset($results['errors'][$key]))
-						$results['errors'][$key] = [];
+		foreach($fields as $field_name => $options) {
+			$results['data'][$field_name] = $options['value'];
+			foreach($options['validations'] as $validation_key => $validation) {
+				if($validation instanceof \SimplrWP\Fields\Field) {
+					if(isset($options['value'][$validation_key]))
+						$validation->set_value($options['value'][$validation_key]);
 						
-					$results['errors'][$key][] = new \WP_Error($validation, str_replace('[field_name]', $options['label'], $this->error_labels[$this->rules[$validation]['error_label']]) );
-					unset($results['data'][$key]);
+					$field_result = $this->validate([ $validation_key => [
+						'value' => $validation->get_value(),
+						'label' => $validation->get_label(),
+						'validations' => $validation->get_before_save_validations()
+					]]);
+					
+					if(!$field_result['valid']) {
+						$results['valid'] = false;
+						
+						$results['errors'][$field_name][$validation_key] = $field_result['errors'][$validation_key];
+					}
+				} else {
+				// this means it's an validation rule so we test against it
+					if(isset($this->rules[$validation]) && !$this->rules[$validation]['function']($options['value'])) {
+						// validation failed so the whole object fails
+						$results['valid'] = false;
+						
+						// lets create the error object for the key, if it hasn't been created yet
+						if(!isset($results['errors'][$field_name]))
+							$results['errors'][$field_name] = [];
+							
+						// let's add the error in the results
+						$results['errors'][$field_name][] = new \WP_Error($validation, str_replace('[field_name]', $options['label'], $this->error_labels[$this->rules[$validation]['error_label']]) );
+						// now we remove the invalid data from the results data
+						unset($results['data'][$field_name]);
+					}
 				}
 			}
 		}
