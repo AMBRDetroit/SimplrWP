@@ -91,11 +91,8 @@ class Validator {
 					if(!isset($results['errors'][$key]))
 						$results['errors'][$key] = [];
 						
-						$results['errors'][$key][] = [
-								'code' => $validation,
-								'message' => str_replace('[field_name]', $options['label'], $this->error_labels[$this->rules[$validation]['error_label']])
-						];
-						unset($results['data'][$key]);
+					$results['errors'][$key][] = new \WP_Error($validation, str_replace('[field_name]', $options['label'], $this->error_labels[$this->rules[$validation]['error_label']]) );
+					unset($results['data'][$key]);
 				}
 			}
 		}
@@ -164,14 +161,16 @@ class Validator {
 		$this->add_rule('is_email_address', function($value='') {
 			return is_email($value);
 		}, 'not_email_address');
-			// is value not empty
-			$this->add_rule('not_empty', function($value='') {
-				return !empty($value);
-			}, 'is_empty');
-				// is value a phone number
-				$this->add_rule('is_phone_number', function($value='') {
-					return $this->is_phone_number($value);
-				}, 'not_phone_number');
+		
+		// is value not empty
+		$this->add_rule('not_empty', function($value='') {
+			return !empty($value);
+		}, 'is_empty');
+		
+		// is value a phone number
+		$this->add_rule('is_phone_number', function($value='') {
+			return $this->is_phone_number($value);
+		}, 'not_phone_number');
 	}
 	
 	/**

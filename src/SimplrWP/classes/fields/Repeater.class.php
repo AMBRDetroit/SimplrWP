@@ -111,3 +111,4 @@ class Repeater extends Field {
 		return preg_replace('/name=\"([\w-_\[\]]*)\"/i', 'name="' . $this->get_name() . '[' . $i . '][$1]" data-fieldname="$1"', $html);
 	}
 }
+?>

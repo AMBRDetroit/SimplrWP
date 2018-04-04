@@ -216,3 +216,5 @@ class SimplrWPObject extends Field {
 		wp_enqueue_script('simplrwp_wp-simplrwp-object', SIMPLRWP_URL . 'assets/js/fields/SimplrWPObject.js');
 	}
 }
+
+?>

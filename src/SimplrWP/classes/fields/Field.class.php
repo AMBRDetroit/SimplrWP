@@ -30,8 +30,6 @@ abstract class Field {
 	// setup field
 	public function __construct($options =  array()) {
 		// set default get value function
-		$this->settings['get_value'] = function($value) { return $value; };
-		// set default render value function
 		$this->settings['render_value'] = function($value) { return $value; };
 		// don't merge validations, replace
 		if(isset($options['before_save_validations']))
@@ -56,7 +54,7 @@ abstract class Field {
 	}
 	
 	public function get_value() {
-		return $this->settings['get_value']($this->settings['value']);
+		return $this->settings['value'];
 	}
 	
 	public function prepare_db_value($value) {
@@ -68,7 +66,7 @@ abstract class Field {
 	}
 	
 	public function render_value() {
-		return $this->settings['render_value']($this->get_value());
+		return $this->settings['render_value']($this->settings['value']);
 	}
 	
 	public function get_label() {
@@ -104,3 +102,5 @@ abstract class Field {
 	}
 	
 }
+
+?>

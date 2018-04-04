@@ -58,3 +58,4 @@ class Checkbox extends Field {
 		return $choices;
 	}
 }
+?>
