@@ -99,7 +99,7 @@ class Validator {
 						
 						$results['errors'][$field_name][$validation_key] = $field_result['errors'][$validation_key];
 					} else {
-						$results['data'][$field_name][$validation_key]= $options['value'][$validation_key];
+						$results['data'][$field_name][$validation_key]= $validation->get_value();
 					}
 				} else {
 					// this means it's an validation rule so we test against it
