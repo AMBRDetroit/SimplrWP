@@ -81,9 +81,8 @@ class Validator {
 	 * @since 2016-07-13
 	 */
 	public function validate($fields = array()) {
-		$results = array( 'valid' => true, 'errors' => []);
+		$results = ['valid' => true, 'errors' => [], 'data' => [] ];
 		foreach($fields as $field_name => $options) {
-			$results['data'][$field_name] = $options['value'];
 			foreach($options['validations'] as $validation_key => $validation) {
 				if($validation instanceof \SimplrWP\Fields\Field) {
 					if(isset($options['value'][$validation_key]))
@@ -99,9 +98,11 @@ class Validator {
 						$results['valid'] = false;
 						
 						$results['errors'][$field_name][$validation_key] = $field_result['errors'][$validation_key];
+					} else {
+						$results['data'][$field_name][$validation_key]= $options['value'][$validation_key];
 					}
 				} else {
-				// this means it's an validation rule so we test against it
+					// this means it's an validation rule so we test against it
 					if(isset($this->rules[$validation]) && !$this->rules[$validation]['function']($options['value'])) {
 						// validation failed so the whole object fails
 						$results['valid'] = false;
@@ -112,10 +113,13 @@ class Validator {
 							
 						// let's add the error in the results
 						$results['errors'][$field_name][] = new \WP_Error($validation, str_replace('[field_name]', $options['label'], $this->error_labels[$this->rules[$validation]['error_label']]) );
-						// now we remove the invalid data from the results data
-						unset($results['data'][$field_name]);
+					} else {
+						$results['data'][$field_name] = $options['value'];
 					}
 				}
+			}
+			if(empty($options['validations'])) {
+				$results['data'][$field_name] = $options['value'];
 			}
 		}
 		return $results;
