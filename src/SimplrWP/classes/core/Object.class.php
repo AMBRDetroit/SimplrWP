@@ -294,11 +294,11 @@ class SObject {
 	 * 
 	 * @since 2016-07-13
 	 */
-	public function update($data = array()) {
+	public function update($data = array(), $only_validate_provided_fields = false) {
 		global $wpdb;
 		
 		// first, let's validate the data before updating the object
-		$result = $this->_validate_data($data);
+		$result = $this->_validate_data($data, $only_validate_provided_fields);
 		if($result['valid'] && sizeof($result['data'])>0) {
 			
 			// data looks good, let's update it in the database
@@ -430,35 +430,50 @@ class SObject {
 	 *
 	 * @since 2016-07-13
 	 */
-	protected function _validate_data($potential_data = array()) {
+	protected function _validate_data($potential_data = [], $only_validate_provided_fields = false) {
 		$data_to_verify = array();
 		
 		// add created at
 		if(isset($potential_data['created_at'])) {
-			$data_to_verify['created_at'] = array(
+			$data_to_verify['created_at'] = [
 				'value' => $potential_data['created_at'],
 				'validations' => []
-			);
+			];
 		}
 		
 		// add updated at
 		if(isset($potential_data['updated_at'])) {
-			$data_to_verify['updated_at'] = array(
+			$data_to_verify['updated_at'] = [
 				'value' => $potential_data['updated_at'],
 				'validations' => []
-			);
+			];
 		}
 		
-		// remove unavailable fields and get validations
-		foreach($this->fields as $field_name => $field) {
-			if(isset($potential_data[$field_name]))
-				$field->set_value($potential_data[$field_name]);
-			
-			$data_to_verify[$field_name] = array(
-				'value' => $field->get_value(),
-				'label' => $field->get_label(),
-				'validations' => $field->get_before_save_validations()
-			);
+		if($only_validate_provided_fields) {
+			foreach($potential_data as $field_name => $value) {
+				if(array_key_exists($field_name, $this->fields)) {
+					$field = $this->fields[$field_name];
+					$field->set_value($potential_data[$field_name]);
+					
+					$data_to_verify[$field_name] = [
+						'value' => $field->get_value(),
+						'label' => $field->get_label(),
+						'validations' => $field->get_before_save_validations()
+					];
+				}
+			}
+		} else {
+			// remove unavailable fields and get validations
+			foreach($this->fields as $field_name => $field) {
+				if(isset($potential_data[$field_name]))
+					$field->set_value($potential_data[$field_name]);
+				
+				$data_to_verify[$field_name] = [
+					'value' => $field->get_value(),
+					'label' => $field->get_label(),
+					'validations' => $field->get_before_save_validations()
+				];
+			}
 		}
 		
 		// validate data
@@ -471,7 +486,7 @@ class SObject {
 		}
 		
 		// validate and return response
-		return $validator->validate($data_to_verify);
+		return $validator->validate($data_to_verify, $only_validate_provided_fields);
 	}
 	
 	/**

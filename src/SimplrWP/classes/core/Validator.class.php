@@ -80,7 +80,7 @@ class Validator {
 	 * 
 	 * @since 2016-07-13
 	 */
-	public function validate($fields = array()) {
+	public function validate($fields = [], $only_validate_provided_fields = false) {
 		$results = ['valid' => true, 'errors' => [], 'data' => [] ];
 		foreach($fields as $field_name => $options) {
 			foreach($options['validations'] as $validation_key => $validation) {
@@ -92,7 +92,7 @@ class Validator {
 							'value' => $sub_validation->get_value(),
 							'label' => $sub_validation->get_label(),
 							'validations' => $sub_validation->get_before_save_validations()
-						] ]);
+						]], $only_validate_provided_fields);
 						
 						if(!$sub_result['valid']) {
 							$results['valid'] = false;
@@ -106,6 +106,8 @@ class Validator {
 					$results['errors'][$field_name][] = $sub_errors;
 					$results['data'][$field_name][] = $sub_data;
 				} else if($validation instanceof \SimplrWP\Fields\Field) {
+					if($only_validate_provided_fields && !array_key_exists($validation_key, $options['value']))
+						continue;
 
 					if(isset($options['value'][$validation_key]))
 						$validation->set_value($options['value'][$validation_key]);
@@ -114,7 +116,7 @@ class Validator {
 						'value' => $validation->get_value(),
 						'label' => $validation->get_label(),
 						'validations' => $validation->get_before_save_validations()
-					]]);
+					]], $only_validate_provided_fields);
 					
 					if(!$field_result['valid']) {
 						$results['valid'] = false;
