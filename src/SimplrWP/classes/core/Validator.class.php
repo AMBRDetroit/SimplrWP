@@ -84,7 +84,28 @@ class Validator {
 		$results = ['valid' => true, 'errors' => [], 'data' => [] ];
 		foreach($fields as $field_name => $options) {
 			foreach($options['validations'] as $validation_key => $validation) {
-				if($validation instanceof \SimplrWP\Fields\Field) {
+				if(is_array($validation)) {
+					$sub_errors = [];
+					$sub_data = [];
+					foreach($validation as $sub_field => $sub_validation) {
+						$sub_result = $this->validate([ $sub_field => [
+							'value' => $sub_validation->get_value(),
+							'label' => $sub_validation->get_label(),
+							'validations' => $sub_validation->get_before_save_validations()
+						] ]);
+						
+						if(!$sub_result['valid']) {
+							$results['valid'] = false;
+							
+							$sub_errors[$sub_field] = $sub_result['errors'][$sub_field];
+						} else {
+							$sub_data[$sub_field] = $sub_validation->get_value();
+						}
+					}
+					
+					$results['errors'][$field_name][] = $sub_errors;
+					$results['data'][$field_name][] = $sub_data;
+				} else if($validation instanceof \SimplrWP\Fields\Field) {
 
 					if(isset($options['value'][$validation_key]))
 						$validation->set_value($options['value'][$validation_key]);

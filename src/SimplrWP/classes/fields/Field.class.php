@@ -79,7 +79,7 @@ abstract class Field {
 	}
 	
 	public function get_before_save_validations() {
-		return $this->settings['before_save_validations'];
+		return is_callable($this->settings['before_save_validations']) ? $this->settings['before_save_validations']($this->get_value()) : $this->settings['before_save_validations'];
 	}
 	
 	public function get_wp_admin_list() {
