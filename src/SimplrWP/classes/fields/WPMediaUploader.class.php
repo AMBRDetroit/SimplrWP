@@ -118,5 +118,3 @@ class WPMediaUploader extends Field {
 		_e( 'Accepted MIME types: ' . implode(', ', array_values($this->settings['restrict_mime_types'])) );
 	}
 }
-
-?>

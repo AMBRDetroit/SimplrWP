@@ -39,4 +39,3 @@ class Radio extends Field {
 		echo '</div>';
 	}
 }
-?>

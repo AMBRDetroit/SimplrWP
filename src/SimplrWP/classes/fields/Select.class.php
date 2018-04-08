@@ -42,4 +42,3 @@ class Select extends Field {
 		return $this->settings['selectable_options'];
 	}
 }
-?>

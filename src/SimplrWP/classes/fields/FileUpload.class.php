@@ -111,5 +111,3 @@ class FileUpload extends Field {
 	}
 
 }
-
-?>

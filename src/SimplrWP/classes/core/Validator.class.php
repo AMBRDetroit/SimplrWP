@@ -65,10 +65,16 @@ class Validator {
 	 * @since 2016-07-13
 	 */
 	public function __construct() {
+		global $simplrwp_validations;
 		// loads the default rules to be used
 		$this->_load_default_rules();
 		// loads the default error labels to be used
 		$this->_load_default_error_labels();
+		// load global rules
+		foreach($simplrwp_validations as $options) {
+			$this->add_rule($options['name'], $options['function'], $options['name']);
+			$this->add_error_label($options['name'], $options['error_label']);
+		}
 	}
 	
 	/**
@@ -80,70 +86,32 @@ class Validator {
 	 * 
 	 * @since 2016-07-13
 	 */
-	public function validate($fields = [], $only_validate_provided_fields = false) {
-		$results = ['valid' => true, 'errors' => [], 'data' => [] ];
-		foreach($fields as $field_name => $options) {
-			foreach($options['validations'] as $validation_key => $validation) {
-				if(is_array($validation)) {
-					$sub_errors = [];
-					$sub_data = [];
-					foreach($validation as $sub_field => $sub_validation) {
-						$sub_result = $this->validate([ $sub_field => [
-							'value' => $sub_validation->get_value(),
-							'label' => $sub_validation->get_label(),
-							'validations' => $sub_validation->get_before_save_validations()
-						]], $only_validate_provided_fields);
-						
-						if(!$sub_result['valid']) {
-							$results['valid'] = false;
-							
-							$sub_errors[$sub_field] = $sub_result['errors'][$sub_field];
-						} else {
-							$sub_data[$sub_field] = $sub_validation->get_value();
-						}
-					}
-					
-					$results['errors'][$field_name][] = $sub_errors;
-					$results['data'][$field_name][] = $sub_data;
-				} else if($validation instanceof \SimplrWP\Fields\Field) {
-					if($only_validate_provided_fields && !array_key_exists($validation_key, $options['value']))
+	public function validate($data = [], $only_validate_provided_fields = false) {
+		$results = [ 'valid' => true, 'errors' => [], 'data' => [] ];
+		
+		foreach($data as $key => $options) {
+			if(array_key_exists('valid', $options['validations'])) {
+				$results['valid'] = $options['validations']['valid'];
+				if($options['validations']['valid'])
+					$results['data'][$key] = $options['validations']['data'];
+				else
+					$results['errors'][$key] = $options['validations']['errors'];
+			} else {
+				$results['data'][$key] = $options['value'];
+				foreach($options['validations'] as $validation) {
+					if($only_validate_provided_fields && $options['value']=='')
 						continue;
 
-					if(isset($options['value'][$validation_key]))
-						$validation->set_value($options['value'][$validation_key]);
-						
-					$field_result = $this->validate([ $validation_key => [
-						'value' => $validation->get_value(),
-						'label' => $validation->get_label(),
-						'validations' => $validation->get_before_save_validations()
-					]], $only_validate_provided_fields);
-					
-					if(!$field_result['valid']) {
-						$results['valid'] = false;
-						
-						$results['errors'][$field_name][$validation_key] = $field_result['errors'][$validation_key];
-					} else {
-						$results['data'][$field_name][$validation_key]= $validation->get_value();
-					}
-				} else {
-					// this means it's an validation rule so we test against it
 					if(isset($this->rules[$validation]) && !$this->rules[$validation]['function']($options['value'])) {
-						// validation failed so the whole object fails
 						$results['valid'] = false;
-						
-						// lets create the error object for the key, if it hasn't been created yet
-						if(!isset($results['errors'][$field_name]))
-							$results['errors'][$field_name] = [];
+						// lets create the error object for the key
+						if(!isset($results['errors'][$key]))
+							$results['errors'][$key] = [];
 							
-						// let's add the error in the results
-						$results['errors'][$field_name][] = new \WP_Error($validation, str_replace('[field_name]', $options['label'], $this->error_labels[$this->rules[$validation]['error_label']]) );
-					} else {
-						$results['data'][$field_name] = $options['value'];
+						$results['errors'][$key][] = new \WP_Error($validation, str_replace('[field_name]', $options['label'], $this->error_labels[$this->rules[$validation]['error_label']]) );
+						unset($results['data'][$key]);
 					}
 				}
-			}
-			if(empty($options['validations'])) {
-				$results['data'][$field_name] = $options['value'];
 			}
 		}
 		return $results;
@@ -194,10 +162,10 @@ class Validator {
 		if(!isset($wp_error))
 			return $rendered;
 			
-			foreach($wp_error->errors as $field => $message) {
-				$rendered->add($field, str_replace('[field_name]', $object->fields[$field]->get_label(), $message));
-			}
-			return $rendered;
+		foreach($wp_error->errors as $field => $message) {
+			$rendered->add($field, str_replace('[field_name]', $object->fields[$field]->get_label(), $message));
+		}
+		return $rendered;
 	}
 	
 	
@@ -243,10 +211,5 @@ class Validator {
 	protected function _is_phone_number($value){
 		$pattern = '^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$^';
 		return preg_match($pattern,$value);
-	}
-	
+	}	
 }
-
-
-
-?>
