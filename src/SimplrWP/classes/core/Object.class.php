@@ -294,11 +294,11 @@ class SObject {
 	 * 
 	 * @since 2016-07-13
 	 */
-	public function update($data = array()) {
+	public function update($data = array(), $only_validate_provided_fields = false) {
 		global $wpdb;
 		
 		// first, let's validate the data before updating the object
-		$result = $this->_validate_data($data);
+		$result = $this->validate_data($data, $only_validate_provided_fields);
 		if($result['valid'] && sizeof($result['data'])>0) {
 			
 			// data looks good, let's update it in the database
@@ -404,6 +404,35 @@ class SObject {
 	}
 	
 	/**
+	 * This renders the object as an array (includes sub fields)
+	 *
+	 * @return array
+	 *
+	 * @since 2018-04-07
+	 */
+	public function render($fields = false) {
+		$fields = $fields ? $fields : $this->fields;
+		$data = [];
+		foreach($fields as $field) {
+			$data[$field->get_name()] = $field->render_value();
+		}
+		return $data;
+	}
+	
+	/**
+	 * This sets the object field data from an array (includes sub fields)
+	 *
+	 * @return null
+	 *
+	 * @since 2018-04-07
+	 */
+	public function set_fields($data = []) {
+		foreach($data as $field => $value) {
+			$this->set_field($field, $value);
+		}
+	}
+	
+	/**
 	 * This validates the potential data to be saved into the database.
 	 *
 	 * @param array $potential_data The potential data to be saved.
@@ -430,37 +459,8 @@ class SObject {
 	 *
 	 * @since 2016-07-13
 	 */
-	protected function _validate_data($potential_data = array()) {
-		$data_to_verify = array();
-		
-		// add created at
-		if(isset($potential_data['created_at'])) {
-			$data_to_verify['created_at'] = array(
-				'value' => $potential_data['created_at'],
-				'validations' => []
-			);
-		}
-		
-		// add updated at
-		if(isset($potential_data['updated_at'])) {
-			$data_to_verify['updated_at'] = array(
-				'value' => $potential_data['updated_at'],
-				'validations' => []
-			);
-		}
-		
-		// remove unavailable fields and get validations
-		foreach($this->fields as $field_name => $field) {
-			if(isset($potential_data[$field_name]))
-				$field->set_value($potential_data[$field_name]);
-			
-			$data_to_verify[$field_name] = array(
-				'value' => $field->get_value(),
-				'label' => $field->get_label(),
-				'validations' => $field->get_before_save_validations()
-			);
-		}
-		
+	public function validate_data($potential_data = [], $only_validate_provided_fields = false) {
+		$result = [ 'valid' => true, 'errors' => [], 'data' => [] ];
 		// validate data
 		$validator = new Validator;
 		
@@ -470,8 +470,29 @@ class SObject {
 			$validator->add_error_label($options['name'], $options['error_label']);
 		}
 		
-		// validate and return response
-		return $validator->validate($data_to_verify);
+		// lets set the data for validation
+		$this->set_fields($potential_data);
+	
+		$fields_to_validate = $this->fields;
+		if($only_validate_provided_fields) {
+			$fields_to_validate= [];
+			foreach($potential_data as $field_name => $value) {
+				if(array_key_exists($field_name, $this->fields))
+					$fields_to_validate[$field_name] = $this->fields[$field_name];
+			}
+		}
+		
+		// let's validate all fields on the object
+		foreach($fields_to_validate as $field_name => $field) {
+			$field_validation_result = $field->validate($validator, $only_validate_provided_fields);
+			if($field_validation_result['valid'] === false) {
+				$result['valid'] = false;
+			}
+			$result['errors'] = array_merge_recursive($result['errors'], $field_validation_result['errors']);
+			$result['data'] = array_merge_recursive($result['data'], $field_validation_result['data']);
+		}
+		
+		return $result;
 	}
 	
 	/**

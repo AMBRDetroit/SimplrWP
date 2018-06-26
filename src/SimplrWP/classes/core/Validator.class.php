@@ -65,10 +65,16 @@ class Validator {
 	 * @since 2016-07-13
 	 */
 	public function __construct() {
+		global $simplrwp_validations;
 		// loads the default rules to be used
 		$this->_load_default_rules();
 		// loads the default error labels to be used
 		$this->_load_default_error_labels();
+		// load global rules
+		foreach($simplrwp_validations as $options) {
+			$this->add_rule($options['name'], $options['function'], $options['name']);
+			$this->add_error_label($options['name'], $options['error_label']);
+		}
 	}
 	
 	/**
@@ -80,22 +86,31 @@ class Validator {
 	 * 
 	 * @since 2016-07-13
 	 */
-	public function validate($data = array()) {
-		$results = array( 'valid' => true, 'errors' => []);
+	public function validate($data = [], $only_validate_provided_fields = false) {
+		$results = [ 'valid' => true, 'errors' => [], 'data' => [] ];
+		
 		foreach($data as $key => $options) {
-			$results['data'][$key] = $options['value'];
-			foreach($options['validations'] as $validation) {
-				if(isset($this->rules[$validation]) && !$this->rules[$validation]['function']($options['value'])) {
-					$results['valid'] = false;
-					// lets create the error object for the key
-					if(!isset($results['errors'][$key]))
-						$results['errors'][$key] = [];
-						
-						$results['errors'][$key][] = [
-								'code' => $validation,
-								'message' => str_replace('[field_name]', $options['label'], $this->error_labels[$this->rules[$validation]['error_label']])
-						];
+			if(array_key_exists('valid', $options['validations'])) {
+				$results['valid'] = $options['validations']['valid'];
+				if($options['validations']['valid'])
+					$results['data'][$key] = $options['validations']['data'];
+				else
+					$results['errors'][$key] = $options['validations']['errors'];
+			} else {
+				$results['data'][$key] = $options['value'];
+				foreach($options['validations'] as $validation) {
+					if($only_validate_provided_fields && $options['value']=='')
+						continue;
+
+					if(isset($this->rules[$validation]) && !$this->rules[$validation]['function']($options['value'])) {
+						$results['valid'] = false;
+						// lets create the error object for the key
+						if(!isset($results['errors'][$key]))
+							$results['errors'][$key] = [];
+							
+						$results['errors'][$key][] = new \WP_Error($validation, str_replace('[field_name]', $options['label'], $this->error_labels[$this->rules[$validation]['error_label']]) );
 						unset($results['data'][$key]);
+					}
 				}
 			}
 		}
@@ -115,8 +130,8 @@ class Validator {
 	 */
 	public function add_rule($name, $function = null, $error_label) {
 		$this->rules[$name] = array(
-				'function' => $function,
-				'error_label' => $error_label
+			'function' => $function,
+			'error_label' => $error_label
 		);
 	}
 	
@@ -147,10 +162,10 @@ class Validator {
 		if(!isset($wp_error))
 			return $rendered;
 			
-			foreach($wp_error->errors as $field => $message) {
-				$rendered->add($field, str_replace('[field_name]', $object->fields[$field]->get_label(), $message));
-			}
-			return $rendered;
+		foreach($wp_error->errors as $field => $message) {
+			$rendered->add($field, str_replace('[field_name]', $object->fields[$field]->get_label(), $message));
+		}
+		return $rendered;
 	}
 	
 	
@@ -164,14 +179,16 @@ class Validator {
 		$this->add_rule('is_email_address', function($value='') {
 			return is_email($value);
 		}, 'not_email_address');
-			// is value not empty
-			$this->add_rule('not_empty', function($value='') {
-				return !empty($value);
-			}, 'is_empty');
-				// is value a phone number
-				$this->add_rule('is_phone_number', function($value='') {
-					return $this->is_phone_number($value);
-				}, 'not_phone_number');
+		
+		// is value not empty
+		$this->add_rule('not_empty', function($value='') {
+			return !empty($value);
+		}, 'is_empty');
+		
+		// is value a phone number
+		$this->add_rule('is_phone_number', function($value='') {
+			return $this->is_phone_number($value);
+		}, 'not_phone_number');
 	}
 	
 	/**
@@ -194,10 +211,5 @@ class Validator {
 	protected function _is_phone_number($value){
 		$pattern = '^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$^';
 		return preg_match($pattern,$value);
-	}
-	
+	}	
 }
-
-
-
-?>

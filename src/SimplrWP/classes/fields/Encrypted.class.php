@@ -39,7 +39,7 @@ class Encrypted extends Field {
 	}
 	
 	public function unprepare_db_value($value) {
-		$this->settings['value'] = $this->_decrypt_value($value);
+		parent::unprepare_db_value($this->_decrypt_value($value));
 	}
 	
 	public function prepare_db_value($value) {
