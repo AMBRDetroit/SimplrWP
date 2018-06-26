@@ -1,4 +1,4 @@
-## SimplrWP - Latest Release v2.0.2
+## SimplrWP - Latest Release v2.1.1
 A developer's framework for WordPress.
 
 # Overview
