@@ -110,8 +110,8 @@ abstract class Field {
 		return $this->settings['db_config'];
 	}
 	
-	public function get_before_save_validations() {
-		return is_callable($this->settings['before_save_validations']) ? $this->settings['before_save_validations']($this->get_value()) : $this->settings['before_save_validations'];
+	public function get_before_save_validations($only_validate_provided_fields) {
+		return is_callable($this->settings['before_save_validations']) ? $this->settings['before_save_validations']($this->get_value(), $only_validate_provided_fields) : $this->settings['before_save_validations'];
 	}
 	
 	public function get_wp_admin_list() {
@@ -135,7 +135,7 @@ abstract class Field {
 			$this->get_name() => [
 			'value' => $this->get_value(),
 			'label' => $this->get_label(),
-			'validations' => $this->get_before_save_validations()
+			'validations' => $this->get_before_save_validations($only_validate_provided_fields)
 		] ], $only_validate_provided_fields);
 
 		// let's validate sub fields
