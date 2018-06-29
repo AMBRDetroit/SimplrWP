@@ -1,6 +1,6 @@
 <?php
 /*
- Name: SimplrW
+ Name: SimplrWP
  Description: This is a PHP framework built on WordPress for more advanced "CPT-type" objects and interfaces.
  Version:     2.1.1
  */
@@ -12,6 +12,10 @@ if(defined('SIMPLRWP_PATH'))
 // initialize for global polling
 global $available_simplrwp_objects;
 $available_simplrwp_objects = array();
+
+// initialize encrypted global key
+global $simplrwp_encrypted_field_key;
+$simplrwp_encrypted_field_key = false;
 
 // global path to SimplrWP
 define( 'SIMPLRWP_PATH', dirname(__FILE__) . '/' );
