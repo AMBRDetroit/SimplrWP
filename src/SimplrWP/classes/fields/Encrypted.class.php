@@ -24,10 +24,12 @@ class Encrypted extends Field {
 		// let's load the defuse library
 		require_once(SIMPLRWP_PATH . '/third_party/defuse-php/defuse-crypto.phar');
 		
-		$this->key = $this->_get_crypto_key();
-		
 		if(defined('SIMPLRWP_ENCRYPT_FIELDS')) {
 			$this->enable_encryption = SIMPLRWP_ENCRYPT_FIELDS;
+		}
+		
+		if($this->enable_encryption) {
+			$this->key = $this->_get_crypto_key();
 		}
 		
 		parent::__construct($options);
