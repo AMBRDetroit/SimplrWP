@@ -15,13 +15,20 @@ namespace SimplrWP\Fields;
  */
 class Encrypted extends Field {
 	
+	protected $enable_encryption = true;
+	
 	protected $key = false;
 	
 	public function __construct($options =  array()) {
+		
 		// let's load the defuse library
 		require_once(SIMPLRWP_PATH . '/third_party/defuse-php/defuse-crypto.phar');
 		
 		$this->key = $this->_get_crypto_key();
+		
+		if(defined('SIMPLRWP_ENCRYPT_FIELDS')) {
+			$this->enable_encryption = SIMPLRWP_ENCRYPT_FIELDS;
+		}
 		
 		parent::__construct($options);
 	}
@@ -47,20 +54,31 @@ class Encrypted extends Field {
 	}
 	
 	private function _encrypt_value($value) {
-		return \Defuse\Crypto\Crypto::encrypt( $value, $this->key);
+		if($this->enable_encryption)
+			return \Defuse\Crypto\Crypto::encrypt( $value, $this->key);
+		
+		return $value;
 	}
 	
 	private function _decrypt_value($value) {
-		try {
-			return \Defuse\Crypto\Crypto::decrypt( $value, $this->key);
-		} catch ( WrongKeyOrModifiedCiphertextException $e) {
-			return $value;
+		if($this->enable_encryption) {
+			try {
+				return \Defuse\Crypto\Crypto::decrypt( $value, $this->key);
+			} catch ( WrongKeyOrModifiedCiphertextException $e) {
+				return $value;
+			}
 		}
+		
+		return $value;
 	}
 	
 	private function _get_crypto_key() {
+		global $simplrwp_encrypted_field_key;
+		
+		if($simplrwp_encrypted_field_key) {
+			return $simplrwp_encrypted_field_key;
 		// is a key path defined?
-		if($key_path = $this->_get_key_file_path()) {
+		} else if($key_path = $this->_get_key_file_path()) {
 			// if no directory, create it
 			if(!file_exists($key_path)) {
 				mkdir($key_path);
@@ -89,7 +107,9 @@ class Encrypted extends Field {
 			
 			$locked_key = \Defuse\Crypto\KeyProtectedByPassword::loadFromAsciiSafeString($simplrwp_encrypt_key_string);
 			
-			return $locked_key->unlockKey(SECURE_AUTH_KEY);
+			$simplrwp_encrypted_field_key = $locked_key->unlockKey(SECURE_AUTH_KEY);
+			
+			return $simplrwp_encrypted_field_key;
 		} 
 		
 		return false;

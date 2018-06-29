@@ -349,9 +349,9 @@ class SObject {
 	 *
 	 * @since 2018-02-03
 	 */
-	public function set_field($field = '', $value = '') {
-		if($field) {
-			return $this->fields[$field]->set_value($value);
+	public function set_field($field_name = '', $value = '') {
+		if(array_key_exists($field_name, $this->fields)) {
+			return $this->fields[$field_name]->set_value($value);
 		}
 	}
 	
