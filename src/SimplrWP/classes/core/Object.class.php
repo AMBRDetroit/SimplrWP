@@ -279,7 +279,7 @@ class SObject {
 	 * @since 2016-07-13
 	 */
 	public function set_id_and_retrieve_data($id = null) {
-		$this->id = $id;
+		$this->id = (int)$id;
 		$this->_retrieve_db_data();
 	}
 	
