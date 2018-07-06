@@ -98,6 +98,14 @@ abstract class Field {
 		}, $this->get_sub_fields());
 	}
 	
+	public function render_sub_field($field_name) {
+		return $this->get_sub_fields()[$field_name]->render_value();
+	}
+	
+	public function get_sub_field($field_name) {
+		return $this->get_sub_fields()[$field_name]->get_value();
+	}
+	
 	public function get_label() {
 		return $this->settings['label'];
 	}
