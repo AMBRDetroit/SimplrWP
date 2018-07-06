@@ -1,4 +1,4 @@
-## SimplrWP - Latest Release v2.1.1
+## SimplrWP - Latest Release v2.1.2
 A developer's framework for WordPress.
 
 # Overview
@@ -83,7 +83,15 @@ Now that you have the object, we can create interfaces to the object.
 		'icon' => 'dashicons-groups',
 		'capability' => 'manage_options',
 		'admin_list' => array(
-			'primary_field' => 'first_name'
+			'primary_field' => 'first_name',
+			'fields' => [
+				'first_name' => [
+					'label' => 'Name',
+					'value' => function($field) {
+						return $field->render_value();
+					}
+				]
+			]
 		),
 		
 	));

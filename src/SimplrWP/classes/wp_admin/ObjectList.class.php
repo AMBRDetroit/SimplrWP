@@ -20,10 +20,27 @@ class ObjectList extends \WP_List_Table {
 	}
 	
 	public function get_columns() {
+		$columns = [];
+		
+		// if bulk options, add check box to select bulk rows
 		if($this->options['allow_bulk_actions']) {
- 			return array_merge(array('cb' => '<input type="checkbox" />'), $this->object->get_data_labels( isset($this->options['fields']) ? $this->options['fields'] : null  ) );
- 		}
- 		return $this->object->get_data_labels( isset($this->options['fields']) ? $this->options['fields'] : null );
+			$columns['cb'] = '<input type="checkbox" />';
+		}
+		
+		// let's get the column data sets
+		if(isset($this->options['fields']) && is_array($this->options['fields']) && !empty($this->options['fields'])) {
+			foreach($this->options['fields'] as $field_name => $field_options) {
+				if(array_key_exists('label', $field_options)) {
+					$columns[$field_name] = $field_options['label'];
+				} else {
+					$columns = array_merge($columns, $this->object->get_data_labels([ $field_name ]) );
+				}
+			}
+		} else {
+			$columns = array_merge($columns, $this->object->get_data_labels() );
+		}
+		
+ 		return $columns;
 	}
 	
 	public function prepare_items($query_object = null) {
@@ -75,8 +92,18 @@ class ObjectList extends \WP_List_Table {
 					$item[$field] = '<div class="dashicons-before dashicons-sort" data-id="' . $item['id'] . '"><br></div>';
 					continue;
 				}
-				if(isset($object->fields[$field]))
-					$item[$field] = $object->fields[$field]->render_value();
+				if(isset($object->fields[$field])) {
+					if(isset($this->options['fields']) && 
+						is_array($this->options['fields']) && 
+						!empty($this->options['fields']) &&
+						array_key_exists($field, $this->options['fields']) &&
+						array_key_exists('value', $this->options['fields'][$field]) &&
+						is_callable($this->options['fields'][$field]['value'])) {
+							$item[$field] = $this->options['fields'][$field]['value']($object->fields[$field]);
+					} else {
+						$item[$field] = $object->fields[$field]->render_value();
+					}
+				}
 			}
 		}
 		
