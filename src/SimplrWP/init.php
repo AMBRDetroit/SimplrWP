@@ -11,11 +11,7 @@ if(defined('SIMPLRWP_PATH'))
 
 // initialize for global polling
 global $available_simplrwp_objects;
-$available_simplrwp_objects = [];
-
-// initialize global validations
-global $simplrwp_validations;
-$simplrwp_validations = [];
+$available_simplrwp_objects = array();
 
 // initialize encrypted global key
 global $simplrwp_encrypted_field_key;
