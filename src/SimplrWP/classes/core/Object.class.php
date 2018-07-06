@@ -279,7 +279,7 @@ class SObject {
 	 * @since 2016-07-13
 	 */
 	public function set_id_and_retrieve_data($id = null) {
-		$this->id = (int)$id;
+		$this->id = $id;
 		$this->_retrieve_db_data();
 	}
 	
@@ -364,10 +364,13 @@ class SObject {
 	 */
 	public function get_field($field = '') {
 		if($field == 'created_at')
-			return $this->get_created_at();
+			return $this->created_at;
 		
 		if($field == 'updated_at')
-			return $this->get_updated_at();
+			return $this->updated_at;
+	
+		if($field == 'id')
+			return $this->get_id();
 		
 		if($field) {
 			return $this->fields[$field]->get_value();

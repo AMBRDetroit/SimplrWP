@@ -92,16 +92,17 @@ class ObjectList extends \WP_List_Table {
 					$item[$field] = '<div class="dashicons-before dashicons-sort" data-id="' . $item['id'] . '"><br></div>';
 					continue;
 				}
-				if(isset($object->fields[$field])) {
+				if(isset($object->fields[$field]) || in_array($field, ['id', 'created_at', 'updated_at'])) {
 					if(isset($this->options['fields']) && 
 						is_array($this->options['fields']) && 
 						!empty($this->options['fields']) &&
 						array_key_exists($field, $this->options['fields']) &&
 						array_key_exists('value', $this->options['fields'][$field]) &&
 						is_callable($this->options['fields'][$field]['value'])) {
-							$item[$field] = $this->options['fields'][$field]['value']($object->fields[$field]);
+							$value = in_array($field, ['id', 'created_at', 'updated_at']) ? $object->get_field($field) : $object->fields[$field];
+							$item[$field] = $this->options['fields'][$field]['value']($value, $object);
 					} else {
-						$item[$field] = $object->fields[$field]->render_value();
+						$item[$field] = in_array($field, ['id', 'created_at', 'updated_at']) ? $object->get_field($field) : $object->fields[$field]->render_value();
 					}
 				}
 			}
