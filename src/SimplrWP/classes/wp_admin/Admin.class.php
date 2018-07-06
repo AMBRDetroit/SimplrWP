@@ -14,9 +14,10 @@ class Admin {
 			'primary_field' => null,
 			'sortable_field' => false,
 			'items_per_page' => 10,
-			'query_fields' => array(),
+			'query_fields' => [],
 			'order_by' => 'id',
-			'order' => 'ASC'
+			'order' => 'ASC',
+			'fields' => []
 		)
 	);
 	
@@ -24,7 +25,7 @@ class Admin {
 		'id' => 0,
 		'label' => 'Metabox',
 		'context' => 'normal',
-		'editable_fields' => array(),
+		'editable_fields' => [],
 		'before_fields_html_template' => '',
 		'after_fields_html_template' => ''
 	);
