@@ -71,9 +71,11 @@ class Validator {
 		// loads the default error labels to be used
 		$this->_load_default_error_labels();
 		// load global rules
-		foreach($simplrwp_validations as $options) {
-			$this->add_rule($options['name'], $options['function'], $options['name']);
-			$this->add_error_label($options['name'], $options['error_label']);
+		if(is_array($simplrwp_validations)) {
+			foreach($simplrwp_validations as $options) {
+				$this->add_rule($options['name'], $options['function'], $options['name']);
+				$this->add_error_label($options['name'], $options['error_label']);
+			}
 		}
 	}
 	
