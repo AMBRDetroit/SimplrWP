@@ -197,7 +197,7 @@ class SObject {
 	 * @since 2016-07-15
 	 */
 	public function get_id() {
-		return $this->id;
+		return (int)$this->id;
 	}
 	
 	/**
@@ -209,7 +209,7 @@ class SObject {
 	 */
 	public function get() {
 		$data = array(
-			'id' => $this->id,
+			'id' => $this->get_id(),
 			'created_at' => $this->created_at,
 			'updated_at' => $this->updated_at
 		);
@@ -227,9 +227,12 @@ class SObject {
 	 * @since 2016-10-03
 	 */
 	public function get_updated_at($format = 'F j, Y') {
+		
 		if(!$this->updated_at)
 			return $this->get_created_at($format);
-		return date($format, strtotime($this->updated_at));
+		
+		$new_datetime = new \DateTime($this->updated_at, new \DateTimeZone(get_option('timezone_string')));
+		return $new_datetime->format($format);
 	}
 	
 	/**
@@ -240,7 +243,8 @@ class SObject {
 	 * @since 2016-10-03
 	 */
 	public function get_created_at($format = 'F j, Y') {
-		return date($format, strtotime($this->created_at));
+		$new_datetime = new \DateTime($this->created_at, new \DateTimeZone(get_option('timezone_string')));
+		return $new_datetime->format($format);die;
 	}
 	
 	/**
