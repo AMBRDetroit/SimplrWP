@@ -4,14 +4,18 @@
 		if(isset($object_data['created_at'])) {
 	?>
 		<div class="timestamp--createdAt misc-pub-section curtime misc-pub-curtime">
-			<span id="timestamp">Created on <?php echo date_i18n(get_option( 'date_format' ) . ' \a\t ' . get_option( 'time_format' ), strtotime($object_data['created_at']) ); ?></span>
+			<?php $created_at_datetime = new \DateTime($object_data['created_at']);
+			$created_at_datetime->setTimezone(new \DateTimeZone(get_option('timezone_string'))); ?>
+			<span id="timestamp">Created on <?php echo $created_at_datetime->format(get_option( 'date_format' ) . ' \a\t ' . get_option( 'time_format' )); ?></span>
 		</div>
 	<?php 
 		}
 		if(isset($object_data['updated_at'])) {
 	?>
 		<div class="timestamp--updatedAt misc-pub-section curtime misc-pub-curtime">
-			<span id="timestamp">Updated on <?php echo date_i18n(get_option( 'date_format' ) . ' \a\t ' . get_option( 'time_format' ), strtotime($object_data['updated_at']) ); ?></span>
+			<?php $updated_at_datetime = new \DateTime($object_data['updated_at']);
+			$updated_at_datetime->setTimezone(new \DateTimeZone(get_option('timezone_string'))); ?>
+			<span id="timestamp">Updated on <?php echo $updated_at_datetime->format(get_option( 'date_format' ) . ' \a\t ' . get_option( 'time_format' )); ?></span>
 		</div>
 	<?php 
 		}
