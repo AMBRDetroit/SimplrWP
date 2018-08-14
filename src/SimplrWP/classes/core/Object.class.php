@@ -244,7 +244,7 @@ class SObject {
 	 */
 	public function get_created_at($format = 'F j, Y') {
 		$new_datetime = new \DateTime($this->created_at, new \DateTimeZone(get_option('timezone_string')));
-		return $new_datetime->format($format);die;
+		return $new_datetime->format($format);
 	}
 	
 	/**
