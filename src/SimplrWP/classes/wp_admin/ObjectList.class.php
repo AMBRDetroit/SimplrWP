@@ -43,7 +43,7 @@ class ObjectList extends \WP_List_Table {
  		return $columns;
 	}
 	
-	public function prepare_items($query_object = null) {
+	public function prepare_items($query_object = null, $query_option_overrides = false) {
 		$this->object = $query_object->object;
 		
 		$action = $this->current_action();
@@ -82,6 +82,11 @@ class ObjectList extends \WP_List_Table {
 		}
 			
 		$query_options['limit'] = $this->options['items_per_page'];
+		
+		if($query_option_overrides) {
+			$query_options = $query_option_overrides;
+		}
+		
 		$this->items = $query_object->query($query_options);
 		
 		foreach($this->items as &$item) {
