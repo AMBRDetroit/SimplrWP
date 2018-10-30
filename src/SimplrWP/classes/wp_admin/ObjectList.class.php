@@ -154,11 +154,8 @@ class ObjectList extends \WP_List_Table {
 	
 	public function delete_objects($object_ids) {
 		foreach($object_ids as $object_id) {
-			$this->object->set_id_and_retrieve_data($object_id);
+			$this->object->set_id_and_retrieve_data((int)$object_id);
 			$this->object->delete();
 		}
-	}
-	
+	}	
 }
-
-?>
