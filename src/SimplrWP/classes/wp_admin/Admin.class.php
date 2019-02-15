@@ -56,7 +56,7 @@ class Admin {
 		
 		// delete the object
 		if(isset($_GET['delete']) && !empty($_GET['id'])) {
-			$this->options['object']->set_id_and_retrieve_data($_GET['id']);
+			$this->options['object']->set_id_and_retrieve_data((int)$_GET['id']);
 			if($this->options['object']->delete()) {
 				wp_redirect($_SERVER['PHP_SELF'] . '?page=' . $_GET['page'] . '&deleted');
 			}
