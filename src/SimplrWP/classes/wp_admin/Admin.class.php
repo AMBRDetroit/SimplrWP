@@ -15,6 +15,7 @@ class Admin {
 			'sortable_field' => false,
 			'items_per_page' => 10,
 			'query_fields' => [],
+			'filter_fields' => [],
 			'order_by' => 'id',
 			'order' => 'ASC',
 			'fields' => []
@@ -56,7 +57,7 @@ class Admin {
 		
 		// delete the object
 		if(isset($_GET['delete']) && !empty($_GET['id'])) {
-			$this->options['object']->set_id_and_retrieve_data($_GET['id']);
+			$this->options['object']->set_id_and_retrieve_data((int)$_GET['id']);
 			if($this->options['object']->delete()) {
 				wp_redirect($_SERVER['PHP_SELF'] . '?page=' . $_GET['page'] . '&deleted');
 			}
@@ -64,8 +65,22 @@ class Admin {
 		
 		// update/create the object
 		if(!empty($_POST)) {
+			if($_GET['page']==$this->options['object']->get_unique_name() && empty($_GET['id'])) {
+				// lets set the filter parameters on the URL, then redirect
+				$filter_params = [];
+				foreach($this->options['admin_list']['filter_fields'] as $field => $options) {
+					if(in_array($field, array_keys($_POST)) && isset($_POST[$field])) {
+						$filter_params[$field] = $_POST[$field];
+					}
+				}
+				if(!empty($filter_params)) {
+					wp_redirect(add_query_arg($filter_params, $_SERVER['PHP_SELF'] . '?page=' . $this->options['object']->get_unique_name()));
+					exit;
+				}
+			}
 			if($this->save_data($_POST)) {
 				wp_redirect($_SERVER['PHP_SELF'] . '?page=' . $this->options['object']->get_unique_name() . '&id=' . $this->options['object']->get()['id'] . '&updated');
+				exit;
 			}
 		}
 		if($this->options['object'] && isset($_GET['page'])) {
@@ -194,7 +209,6 @@ class Admin {
 	
 	public function render_menus() {
 		if(!$this->options['parent_slug']) {
-			//echo'<pre>';var_dump($this->options['object']->get_unique_name());die;
 			add_menu_page( $this->options['object']->get_labels()['plural'], $this->options['object']->get_labels()['plural'], $this->options['capability'], $this->options['object']->get_unique_name(), array(&$this, 'list_objects_callback'), $this->options['icon'], $this->options['position'] );
 			
 			foreach($this->sub_menus as $sub_menu) {
@@ -268,6 +282,4 @@ class Admin {
 		//include the admin footer HTML
 		include SIMPLRWP_PATH . 'templates/wp_admin/admin_foot.php';
 	}	
-
 }
-?>

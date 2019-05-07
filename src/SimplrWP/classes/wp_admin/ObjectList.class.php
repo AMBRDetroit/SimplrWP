@@ -10,7 +10,8 @@ class ObjectList extends \WP_List_Table {
 	protected $object;
 	
 	protected $options = [
- 		'allow_bulk_actions' => true
+		 'allow_bulk_actions' => true,
+		 'filter_fields' => [] // assoc array where keys are fields and value is a key/value list of options
  	];
 	
 	public function __construct($options = array()) {
@@ -45,7 +46,7 @@ class ObjectList extends \WP_List_Table {
 	
 	public function prepare_items($query_object = null, $query_option_overrides = false) {
 		$this->object = $query_object->object;
-		
+
 		$action = $this->current_action();
 		if($action == 'delete') {
 			$this->delete_objects($_POST[$this->object->get_unique_name()]);
@@ -80,9 +81,27 @@ class ObjectList extends \WP_List_Table {
 				);
 			}
 		}
+		// filter queries
+		$filter_queries = [];
+		foreach($this->options['filter_fields'] as $field => $options) {
+			if(in_array($field, array_keys($_GET)) && !empty($_GET[$field])) {
+				$filter_queries[] = [
+					'key' => $field,
+					'value' => $_GET[$field]
+				];
+			}	
+		}
+		if(!empty($filter_queries)) {
+			$filter_query_where_args = [
+				'relation' => 'OR'
+			];
+			$filter_query_where_args[] = $filter_queries;
+
+			$query_options['where_args'][] = $filter_query_where_args;
+		}
 			
 		$query_options['limit'] = $this->options['items_per_page'];
-		
+
 		if($query_option_overrides) {
 			$query_options = $query_option_overrides;
 		}
@@ -113,10 +132,10 @@ class ObjectList extends \WP_List_Table {
 			}
 		}
 		
-		$this->set_pagination_args( array(
-			'total_items' => $query_object->total_number_of_db_objects(),
+		$this->set_pagination_args( [
+			'total_items' => $query_object->total_number_of_last_query_objects(),
 			'per_page'    => $this->options['items_per_page']
-		) );
+		 ] );
 	}
 	
 	public function column_default( $item, $column_name ) {
@@ -143,6 +162,24 @@ class ObjectList extends \WP_List_Table {
      	}
      	return false;
 	}
+
+
+	public function extra_tablenav( $which ) {
+		if(!empty($this->options['filter_fields']) && $which == 'top') {
+			echo '<div class="alignleft actions">';
+				foreach($this->options['filter_fields'] as $field => $options_list) {
+					echo '<select name="' . $field . '">';
+						echo '<option value="">All ' . str_replace('_', ' ', $field) . 's</option>';
+						foreach($options_list as $key => $value) {
+							echo sprintf('<option value="%s" %s>%s</option>', $key, $_GET[$field]==$key ? 'selected' : '', $value);
+						}
+					echo '</select>';
+				}
+				submit_button( __( 'Filter' ), '', 'filter_action', false, array( 'id' => 'post-query-submit' ) );
+			echo '</div>';
+		}
+	}
+
 	
 	public function get_object() {
 		return $this->object;
