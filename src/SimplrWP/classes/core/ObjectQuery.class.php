@@ -126,6 +126,10 @@ class ObjectQuery {
 				if ( $options['distinct'] ) {
 					$distinct = 'DISTINCT';
 				}
+
+				if(isset($value['field'])) {
+					$key = $value['field'];
+				}
 					
 				if ( isset($value['function']) && !empty($value['function']) ) {
 					$function_suffix = !empty($value['function_suffix']) ? ' ' . $value['function_suffix'] : '';
