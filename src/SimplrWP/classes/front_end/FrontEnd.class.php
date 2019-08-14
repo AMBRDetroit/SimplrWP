@@ -114,7 +114,7 @@ class FrontEnd {
 			if( !empty($id) && !in_array(implode('-',array_keys($url_parameters)), array_keys($this->sub_pages)) ) {
 				 
 				// get query fields for object
-				preg_match_all('/\[([\w-_]*)\]*([\w-_]*)/i', $this->settings['object_slug'], $query_fields);
+				preg_match_all('/\[([\w\-_]*)\]*([\w\-_]*)/i', $this->settings['object_slug'], $query_fields);
 				$query_keys = $query_fields[1];
 				 
 				// generate regex for getting the values from query var
