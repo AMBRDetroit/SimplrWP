@@ -187,7 +187,7 @@ class FrontEnd {
 			$current_object->set_id_and_retrieve_data($id);
 				
 			// get object fields from object slug
-			preg_match_all('/\[([\w-_]*)\]*([\w-_]*)/i', $this->settings['object_slug'], $object_matches);
+			preg_match_all('/\[([\w\-_]*)\]*([\w\-_]*)/i', $this->settings['object_slug'], $object_matches);
 			$object_fields = $object_matches[1];
 
 			// generate regex for getting the values from query var
