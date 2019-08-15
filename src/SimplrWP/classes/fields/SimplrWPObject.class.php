@@ -199,8 +199,15 @@ class SimplrWPObject extends Field {
 		$simplrwp_objects = array();
 		if(!empty($value)){
 			foreach($value as $i) {
-				$value_parts = explode('=::=', $i);
-				$simplrwp_objects[$value_parts[0]][] = intval($value_parts[1]);
+				if(is_array($i)) {
+					foreach($i as $sub_i) {
+						$sub_value_parts = explode('=::=', $sub_i);
+						$simplrwp_objects[$sub_value_parts[0]][] = intval($sub_value_parts[1]);
+					}
+				} else {
+					$value_parts = explode('=::=', $i);
+					$simplrwp_objects[$value_parts[0]][] = intval($value_parts[1]);
+				}
 			}			
 		}
 		
